@@ -13,21 +13,21 @@ const initialState = {
     initialState,
     reducers: {
         getViewDetails: (state) => {
-            state.view.viewData = [];
-            state.view.viewLoading = true;
-            state.view.viewError = false;
+            state.viewData = [];
+            state.viewLoading = true;
+            state.viewError = false;
           },
   
           viewDetailsSuccess: (state, action) => {
             const viewData = pathOr({}, 'payload', action);
-            state.view.viewData = viewData;
-            state.view.viewLoading = false;
-            state.view.viewError = false;
+            state.viewData = viewData;
+            state.viewLoading = false;
+            state.viewError = false;
           },
           viewDetailsFailure: (state) => {
-            state.view.viewData = [];
-            state.view.viewLoading = false;
-            state.view.viewError = true;
+            state.viewData = [];
+            state.viewLoading = false;
+            state.viewError = true;
           }
     }
 })

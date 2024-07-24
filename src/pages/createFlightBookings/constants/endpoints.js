@@ -1,3 +1,3 @@
 export const URL = {
-    viewDetails: `/train-aggregation/v1/crs/booking/view`,
+    viewDetails: `/flightaggregation/v1/flight/crs/booking/view`,
   }

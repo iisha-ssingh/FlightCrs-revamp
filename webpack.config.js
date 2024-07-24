@@ -1,7 +1,7 @@
 const webpack = require("webpack");
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const ESLintPlugin = require('eslint-webpack-plugin');
+// const ESLintPlugin = require('eslint-webpack-plugin');
 
 const HOST = process.env.HOST || "0.0.0.0";
 const PORT = process.env.PORT || "3008";
@@ -27,12 +27,11 @@ module.exports = {
           {
             loader: 'babel-loader',
             options: {
-              plugins: ['react-refresh/babel'],  // Enable React Fast Refresh
-            },
+            presets: ['@babel/preset-react'] // Use the react preset
+            }
           },
         ],
       },
-      // ... (other rules remain the same)
     ]
   },
   optimization: {
@@ -55,21 +54,35 @@ module.exports = {
       }
     }
   },
+
   devServer: {
-    contentBase: "./public",
-    overlay: true,
-    noInfo: false,
-    hot: true,
+    static: './public',
     historyApiFallback: true,
     port: PORT,
     host: HOST,
-    disableHostCheck: true,
+    allowedHosts: ['flightcrs.fabhotels.com'],
     proxy: [
-      // ... (proxy settings remain the same)
+        {
+            context: ["/admin/flightcrs/fabuser/**"],
+            target: "https://www.fabmailers.in",
+            secure: false,
+            changeOrigin: true
+          },
+          {
+            context: ["/admin/flightcrs/fabcrs/**"],
+            target: "https://www.fabmailers.in",
+            secure: false,
+            changeOrigin: true
+          },
+          {
+            context: ["/admin/flightcrs/flightaggregation/**"],
+            target: "https://www.fabmailers.in",
+            secure: false,
+            changeOrigin: true
+          },
     ],
-    stats: 'errors-only',  // Only output errors to console
-    clientLogLevel: 'warning',  // Reduce client-side logs
   },
+
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
@@ -78,10 +91,10 @@ module.exports = {
       inject: "body",
       tenantToken: process.env.tenantToken || '',
     }),
-    new ESLintPlugin({  // Add ESLint plugin for real-time linting
-      extensions: ['js', 'jsx'],
-      exclude: 'node_modules'
-    }),
+    // new ESLintPlugin({  // Add ESLint plugin for real-time linting
+    //   extensions: ['js', 'jsx'],
+    //   exclude: 'node_modules'
+    // }),
     new webpack.DefinePlugin({  // Define environment variables
       'process.env.NODE_ENV': JSON.stringify('development'),
       'process.env.DEBUG': JSON.stringify(process.env.DEBUG || 'false'),

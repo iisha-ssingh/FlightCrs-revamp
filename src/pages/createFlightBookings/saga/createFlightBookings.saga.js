@@ -5,10 +5,10 @@ import { getViewDetails, viewDetailsSuccess, viewDetailsFailure } from '../slice
 function* fetchViewDetails(request) {
     try {
       const response = yield call(Api.getViewDetails, request);
-      const content = pathOr({}, 'data.data', response);
+      const content = response?.data?.data ?? {}
       yield put(viewDetailsSuccess(content));
     } catch ({ response: errorResponse = {} }) {
-      const error = pathOr('', 'data.message', errorResponse);
+      const error = errorResponse?.data?.message ?? {};
       yield put(viewDetailsFailure(error));
     }
   }
