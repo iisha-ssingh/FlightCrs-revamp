@@ -5,30 +5,6 @@ export const httpStatusCodes = {
     BAD_REQUEST: 400,
   };
 
-export function getObjectValue(obj, key, defaultValue = null) {
-    let enumerator = obj;
-    let property = key;
-  
-    if (isEnumerable(enumerator) && keyExists(property, enumerator)) {
-      return enumerator[property];
-    }
-  
-    const dotLastIndex = property.lastIndexOf('.');
-  
-    if (dotLastIndex >= 0) {
-      const withoutLastKey = property.substr(0, dotLastIndex);
-      enumerator = getObjectValue(enumerator, withoutLastKey, defaultValue);
-      property = property.substr(dotLastIndex + 1);
-    }
-  
-    if (isEnumerable(enumerator)) {
-      return keyExists(property, enumerator)
-        ? enumerator[property]
-        : defaultValue;
-    }
-    return defaultValue;
-  }
-
   export function isEmpty(obj) {
     let isEmptyValue = false;
     const type = typeof obj;

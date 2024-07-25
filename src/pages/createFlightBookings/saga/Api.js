@@ -3,7 +3,7 @@ import { URL } from '../constants/endpoints';
 
 function getViewDetails(params) {
     const api = new Request(false);
-    return api.get(URL.viewDetails, params?.payload, URL.viewDetails);
+    return api.post(URL.viewDetails, params?.payload, URL.viewDetails);
   }
 
   export default { getViewDetails }

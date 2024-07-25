@@ -1,41 +1,79 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { CORPORATE_DETAILS } from '../constants/formState';
 import { VIEW_FLIGHT } from '../constants/strings';
-const initialState = {
-      viewData: {},
-      viewLoading: false,
-      viewError: false,
-    //   corporateDetails : JSON.parse(JSON.stringify({ ...CORPORATE_DETAILS })),
-  };
+import { 
+  BOOKING_DETAILS, 
+  CORPORATE_DETAILS, 
+  FLIGHT_DETAILS, 
+  TRIP_MAPPING 
+} from '../constants/formState';
+import { 
+  corporateDetailsFormatter, 
+  tripDetailsFormatter, 
+  bookingDetailsFormatter,
+  flightDetailsFormatter 
+} from '../utils/dataFormatter';
 
-  const flightViewBookings = createSlice({
-    name: VIEW_FLIGHT,
-    initialState,
-    reducers: {
-        getViewDetails: (state) => {
-            state.viewData = [];
-            state.viewLoading = true;
-            state.viewError = false;
-          },
-  
-          viewDetailsSuccess: (state, action) => {
-            const viewData = pathOr({}, 'payload', action);
-            state.viewData = viewData;
-            state.viewLoading = false;
-            state.viewError = false;
-          },
-          viewDetailsFailure: (state) => {
-            state.viewData = [];
-            state.viewLoading = false;
-            state.viewError = true;
-          }
+const initialState = {
+  viewData: {},
+  viewLoading: false,
+  viewError: false,
+  corporateDetails: JSON.parse(JSON.stringify({ ...CORPORATE_DETAILS })),
+  tripDetails: JSON.parse(JSON.stringify({ ...TRIP_MAPPING })),
+  bookingDetails: JSON.parse(JSON.stringify({ ...BOOKING_DETAILS })),
+  flightDetails: JSON.parse(JSON.stringify({ ...FLIGHT_DETAILS })),
+};
+
+const flightViewBookings = createSlice({
+  name: VIEW_FLIGHT,
+  initialState,
+  reducers: {
+    getViewDetails: (state) => {
+      state.viewData = [];
+      state.viewLoading = true;
+      state.viewError = false;
+    },
+
+    viewDetailsSuccess: (state, action) => {
+      const viewData = action?.payload ?? {};
+      const { 
+        corporateDetails = {}, 
+        relationshipManager = {}, 
+        flightDetails = {} , 
+        bookingDetails = {}
+      } = viewData || {}
+
+      state.viewData = viewData;
+      state.viewLoading = false;
+      state.viewError = false;
+      state.corporateDetails = {
+        ...state.corporateDetails,
+        ...corporateDetailsFormatter(state, corporateDetails, relationshipManager)
+      }
+      state.tripDetails = {
+        ...state.tripDetails,
+        ...tripDetailsFormatter(state, flightDetails)
+      },
+        state.bookingDetails = {
+          ...state.bookingDetails,
+          ...bookingDetailsFormatter(state,bookingDetails)
+        },
+        state.flightDetails = {
+          ...state.flightDetails,
+          // ...flightDetailsFormatter(state,flightDetails)
+        }
+    },
+    viewDetailsFailure: (state) => {
+      state.viewData = [];
+      state.viewLoading = false;
+      state.viewError = true;
     }
+  }
 })
 
 export const {
-    getViewDetails,
-    viewDetailsSuccess,
-    viewDetailsFailure
+  getViewDetails,
+  viewDetailsSuccess,
+  viewDetailsFailure
 } = flightViewBookings.actions;
 
 export default flightViewBookings.reducer;

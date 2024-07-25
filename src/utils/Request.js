@@ -40,7 +40,7 @@ class Request {
 
     // Response Interceptor
     instance.interceptors.response.use(undefined, (error) => {
-      const status = getObjectValue(error, 'response.status', null);
+      const status = error?.response?.status;
       if (status === httpStatusCodes.UNAUTHORIZED) {
         // Unauthorized User
         const currentURL = window.location.href;
