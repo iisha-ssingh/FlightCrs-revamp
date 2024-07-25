@@ -102,10 +102,10 @@
 import React from 'react';
 import CreateFlightBookings from './pages/createFlightBookings';
 
-function App() {
+const App = () => {
   return (
     <div>
-      <CreateFlightBookings/>
+      <CreateFlightBookings />
     </div>
   );
 }

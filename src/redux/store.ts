@@ -7,12 +7,15 @@ const sagaMiddleware = createSagaMiddleware();
 
 const store = configureStore({
   reducer: rootReducer,
-  middleware: (defaultMiddleware) =>
-    defaultMiddleware({
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
       serializableCheck: true,
     }).concat(sagaMiddleware),
 });
 
 sagaMiddleware.run(rootSaga);
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 
 export { store };

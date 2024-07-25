@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { VIEW_FLIGHT } from '../constants/strings';
 import { 
   BOOKING_DETAILS, 
@@ -12,8 +12,9 @@ import {
   bookingDetailsFormatter,
   flightDetailsFormatter 
 } from '../utils/dataFormatter';
+import { ViewData, ViewState } from '../utils/propType';
 
-const initialState = {
+const initialState: ViewState = {
   viewData: {},
   viewLoading: false,
   viewError: false,
@@ -28,19 +29,19 @@ const flightViewBookings = createSlice({
   initialState,
   reducers: {
     getViewDetails: (state) => {
-      state.viewData = [];
+      state.viewData = {};
       state.viewLoading = true;
       state.viewError = false;
     },
 
-    viewDetailsSuccess: (state, action) => {
-      const viewData = action?.payload ?? {};
+    viewDetailsSuccess: (state, action: PayloadAction<ViewData>) => {
+      const viewData = action.payload ?? {};
       const { 
         corporateDetails = {}, 
         relationshipManager = {}, 
         flightDetails = {} , 
         bookingDetails = {}
-      } = viewData || {}
+      } = viewData;
 
       state.viewData = viewData;
       state.viewLoading = false;
@@ -48,27 +49,27 @@ const flightViewBookings = createSlice({
       state.corporateDetails = {
         ...state.corporateDetails,
         ...corporateDetailsFormatter(state, corporateDetails, relationshipManager)
-      }
+      };
       state.tripDetails = {
         ...state.tripDetails,
         ...tripDetailsFormatter(state, flightDetails)
-      },
-        state.bookingDetails = {
-          ...state.bookingDetails,
-          ...bookingDetailsFormatter(state,bookingDetails)
-        },
-        state.flightDetails = {
-          ...state.flightDetails,
-          // ...flightDetailsFormatter(state,flightDetails)
-        }
+      };
+      state.bookingDetails = {
+        ...state.bookingDetails,
+        ...bookingDetailsFormatter(state, bookingDetails)
+      };
+      state.flightDetails = {
+        ...state.flightDetails,
+        // ...flightDetailsFormatter(state,flightDetails)
+      };
     },
-    viewDetailsFailure: (state) => {
-      state.viewData = [];
+    viewDetailsFailure: (state, action: PayloadAction<string>) => {
+      state.viewData = {};
       state.viewLoading = false;
       state.viewError = true;
     }
   }
-})
+});
 
 export const {
   getViewDetails,
