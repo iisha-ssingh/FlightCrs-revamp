@@ -5,7 +5,7 @@ export const httpStatusCodes = {
     BAD_REQUEST: 400,
   };
 
-  export function isEmpty(obj) {
+  export function isEmpty(obj: unknown): boolean {
     let isEmptyValue = false;
     const type = typeof obj;
   
@@ -16,7 +16,7 @@ export const httpStatusCodes = {
     isEmptyValue = isEmptyValue || obj === false || obj === 0; // if boolean value returns false
     isEmptyValue = isEmptyValue || (Array.isArray(obj) && obj.length === 0); // if array is empty
     isEmptyValue =
-      isEmptyValue || (type === 'object' && Object.keys(obj).length === 0); // if object is empty
+      isEmptyValue || (type === 'object' && Object.keys(obj as object).length === 0); // if object is empty
   
     return isEmptyValue;
-  }
+}

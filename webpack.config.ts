@@ -8,7 +8,7 @@ const PORT = process.env.PORT || "3000";
 
 module.exports = {
   mode: 'development',  // Set mode to development
-  entry: ["./src/index.tsx"],
+  entry: ["/src/index.tsx"],
   devtool: 'eval-source-map', 
   output: {
     path: path.resolve(__dirname, "public/build"),
@@ -21,18 +21,29 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(js|jsx|ts|tsx)$/,
+        test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: [
           {
             loader: 'babel-loader',
             options: {
-            presets: ['@babel/preset-react','@babel/preset-typescript'] // Use the react preset
+            presets: ['@babel/preset-react'] // Use the react preset
             }
           },
         ],
       },
-   
+      {
+        test: /\.(ts|tsx)$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-react', '@babel/preset-typescript'] // Use the react and typescript presets
+            }
+          },
+        ],
+      },
     ]
   },
   optimization: {
@@ -44,7 +55,7 @@ module.exports = {
       cacheGroups: {
         vendor: {
           test: /[\\/]node_modules[\\/]/,
-          name(module) {
+          name(module:any) {
             const packageName = module.context.match(
               /[\\/]node_modules[\\/](.*?)([\\/]|$)/
             )[1];

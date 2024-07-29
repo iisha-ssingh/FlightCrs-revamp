@@ -1,1 +1,1 @@
-export {default} from './createFlightBookings.tsx'
+export {default} from './createFlightBookings'

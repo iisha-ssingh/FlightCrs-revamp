@@ -6,7 +6,7 @@ interface RequestConfig {
   type ErrorFunction = (data: any[], headers: any, status: number) => any;
   
 
-export {
+export type{
     RequestConfig,
     ErrorFunction,
 }

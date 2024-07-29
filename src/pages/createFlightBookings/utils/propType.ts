@@ -105,7 +105,7 @@ interface DetailItem {
   }
   
 
-  export {
+  export type{
     ViewState,
     Details,
     State,
