@@ -75,19 +75,19 @@ module.exports = {
     proxy: [
         {
             context: ["/admin/flightcrs/fabuser/**"],
-            target: "https://www.fabmailers.in/",
+            target: "https://uat.fabmailers.in/",
             secure: false,
             changeOrigin: true
           },
           {
             context: ["/admin/flightcrs/fabcrs/**"],
-            target: "https://www.fabmailers.in/",
+            target: "https://uat.fabmailers.in/",
             secure: false,
             changeOrigin: true
           },
           {
             context: ["/admin/flightcrs/flightaggregation/**"],
-            target: "https://www.fabmailers.in/",
+            target: "https://uat.fabmailers.in/",
             secure: false,
             changeOrigin: true
           },

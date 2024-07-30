@@ -100,9 +100,9 @@
 
 
 import React from 'react';
-import CreateFlightBookings from './pages/createFlightBookings';
+import CreateFlightBookings from './pages/FormView';
 
-const App = () => {
+const App: React.FC = () => {
   return (
     <div>
       <CreateFlightBookings />

@@ -1,10 +1,16 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { VIEW_FLIGHT } from '../constants/strings';
+import { FLIGHT_FORM } from '../constants/strings';
 import { 
   BOOKING_DETAILS, 
   CORPORATE_DETAILS, 
   FLIGHT_DETAILS, 
-  TRIP_MAPPING 
+  TRIP_MAPPING,
+  JOURNEY_TYPE,
+  BAGGAGE_DETAILS,
+  STOP_DETAILS,
+  PASSENGER_DETAILS,
+  PAYMENT_DETAILS,
+  PRICE_BREAKUP
 } from '../constants/formState';
 import { 
   corporateDetailsFormatter, 
@@ -12,24 +18,37 @@ import {
   bookingDetailsFormatter,
   flightDetailsFormatter 
 } from '../utils/dataFormatter';
-import { ViewData, ViewState } from '../utils/propType';
+import { FormState, ViewData, ViewState } from '../utils/props';
 
 const initialState: ViewState = {
-  viewData: {},
   viewLoading: false,
   viewError: false,
+  journeyType: JSON.parse(JSON.stringify({ ...JOURNEY_TYPE })),
   corporateDetails: JSON.parse(JSON.stringify({ ...CORPORATE_DETAILS })),
   tripDetails: JSON.parse(JSON.stringify({ ...TRIP_MAPPING })),
   bookingDetails: JSON.parse(JSON.stringify({ ...BOOKING_DETAILS })),
   flightDetails: JSON.parse(JSON.stringify({ ...FLIGHT_DETAILS })),
+  stopDetails : JSON.parse(JSON.stringify({ ...STOP_DETAILS })),
+  baggageDetails : JSON.parse(JSON.stringify({ ...BAGGAGE_DETAILS })),
+  guestDetails : JSON.parse(JSON.stringify({ ...PASSENGER_DETAILS })),
+  paymentMode : JSON.parse(JSON.stringify({ ...PAYMENT_DETAILS })),
+  priceBreakup : JSON.parse(JSON.stringify({ ...PRICE_BREAKUP}))
 };
 
-const flightViewBookings = createSlice({
-  name: VIEW_FLIGHT,
+const flightForm = createSlice({
+  name: FLIGHT_FORM,
   initialState,
   reducers: {
+
+    updateFormState: (state, action: PayloadAction<FormState>) => {
+      const { component, field, value } = action.payload;
+      if (component in state && typeof state[component] === 'object') {
+        const formState = (state[component] as Record<string, unknown>)[field] as { value: object };
+        formState.value = value;
+      }
+    },
+
     getViewDetails: (state) => {
-      state.viewData = {};
       state.viewLoading = true;
       state.viewError = false;
     },
@@ -43,7 +62,6 @@ const flightViewBookings = createSlice({
         bookingDetails = {}
       } = viewData;
 
-      state.viewData = viewData;
       state.viewLoading = false;
       state.viewError = false;
       state.corporateDetails = {
@@ -64,7 +82,6 @@ const flightViewBookings = createSlice({
       };
     },
     viewDetailsFailure: (state, action: PayloadAction<string>) => {
-      state.viewData = {};
       state.viewLoading = false;
       state.viewError = true;
     }
@@ -72,9 +89,10 @@ const flightViewBookings = createSlice({
 });
 
 export const {
+  updateFormState,
   getViewDetails,
   viewDetailsSuccess,
   viewDetailsFailure
-} = flightViewBookings.actions;
+} = flightForm.actions;
 
-export default flightViewBookings.reducer;
+export default flightForm.reducer;

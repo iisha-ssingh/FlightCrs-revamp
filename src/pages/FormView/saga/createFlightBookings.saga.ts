@@ -1,8 +1,8 @@
 import Api from './Api';
 import { call, put, takeLatest } from 'redux-saga/effects';
-import { getViewDetails, viewDetailsSuccess, viewDetailsFailure } from '../slice/viewDetails.slice';
+import { getViewDetails, viewDetailsSuccess, viewDetailsFailure } from '../slice/form.slice';
 import { PayloadAction } from '@reduxjs/toolkit';
-import { ApiResponse, ErrorResponse, ViewDetailsRequest } from '../utils/propType';
+import { ApiResponse, ErrorResponse, ViewDetailsRequest } from '../utils/props';
 
 
 
@@ -10,7 +10,7 @@ function* fetchViewDetails(action: PayloadAction<ViewDetailsRequest>) {
   const tempRequest = {
     payload: {
       companyId: "",
-      bookingId: "FSONDIY"
+      bookingId: "FVFNFVU"
     }
   };
 

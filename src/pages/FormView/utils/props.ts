@@ -8,10 +8,16 @@ interface DetailItem {
   }
   
   interface ComponentProps {
+    journeyType : Details;
     corporateDetails: Details;
     tripDetails: Details;
     bookingDetails: Details;
     flightDetails: Details;
+    stopDetails : Details;
+    baggageDetails : Details;
+    guestDetails : Details;
+    paymentMode : Details;
+    priceBreakup : Details;
   }
 
   interface StateDetail {
@@ -24,7 +30,7 @@ interface DetailItem {
     bookingDetails: StateDetail;
     flightDetails: StateDetail;
   }
-  
+
   interface CorporateDetails {
     companyName?: string;
     companyId?: string;
@@ -34,6 +40,10 @@ interface DetailItem {
       gSTCompanyAddress?: string;
       gSTCompanyPinCode?: string;
     };
+  }
+
+  interface JourneyType{
+    journeyType?: string;
   }
   
   interface RelationshipManager {
@@ -65,6 +75,7 @@ interface DetailItem {
 
 
   interface ViewData {
+    journeyType?: JourneyType;
     corporateDetails?: CorporateDetails;
     relationshipManager?: RelationshipManager;
     flightDetails?: FlightDetails;
@@ -72,7 +83,6 @@ interface DetailItem {
   }
   
   interface ViewState extends ComponentProps{
-    viewData: ViewData;
     viewLoading: boolean;
     viewError: boolean;
   }
@@ -104,19 +114,31 @@ interface DetailItem {
     };
   }
   
+  interface MoleculeType{
+    onChangeInput: (event: React.ChangeEvent<HTMLInputElement>, type : string) => void;
+    onChangeDropdown: (event: React.ChangeEvent<HTMLSelectElement>,type : string) => void;
+  }
+
+  interface FormState {
+    component: keyof ViewState, 
+    field: string; 
+    value: any 
+  }
 
   export type{
     ViewState,
     Details,
     State,
-    CorporateDetails,
-    RelationshipManager,
-    FlightDetails,
-    BookingDetails,
     ComponentProps,
-    ViewData,
     ViewDetailsRequest,
     ApiResponse,
     ErrorResponse,
-    ViewDetailsParams
+    ViewDetailsParams,
+    MoleculeType,
+    ViewData,
+    FormState,
+    CorporateDetails,
+    RelationshipManager,
+    BookingDetails,
+    FlightDetails
   }

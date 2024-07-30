@@ -5,7 +5,7 @@
     RelationshipManager,
     BookingDetails,
     FlightDetails
-  } from '../utils/propType';
+  } from './props';
 
   export const corporateDetailsFormatter = (
     state: State = {} as State,

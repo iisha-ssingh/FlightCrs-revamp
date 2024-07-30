@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getViewDetails } from './slice/viewDetails.slice';
+import { getViewDetails } from './slice/form.slice';
 import { isEmpty } from '../../utils/common';
 import { RootState } from '../../redux/store'; // Adjust this import path as needed
-import { Details, ComponentProps } from './utils/propType';
+import { Details, ComponentProps } from './utils/props';
 
 
 
-const CreateFlightBookings = () => {
+const CreateFlightBookings: React.FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -28,14 +28,7 @@ const CreateFlightBookings = () => {
 
   return (
     <div>
-      <h2>Company details</h2>
-      {renderDetails(corporateDetails)}
-      <hr />
-      <h2>Trip Mapping</h2>
-      {renderDetails(tripDetails)}
-      <hr />
-      <h2>Booking details</h2>
-      {renderDetails(bookingDetails)}
+      
     </div>
   );
 };
