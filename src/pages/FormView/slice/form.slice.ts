@@ -17,10 +17,10 @@ import {
   corporateDetailsFormatter, 
   tripDetailsFormatter, 
   bookingDetailsFormatter,
-  flightDetailsFormatter 
-} from '../utils/dataFormatter';
+  flightDetailsFormatter ,
+  populatePrefetch
+} from '../utils/apiDataFormatter';
 import { FormState, ViewData, ViewState } from '../utils/props';
-import { populatePrefetch } from '../utils/sagaFormatter';
 
 
 const initialState: ViewState = {
