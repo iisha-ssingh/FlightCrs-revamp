@@ -73,18 +73,6 @@ module.exports = {
     host: HOST,
     allowedHosts: ['flightcrs.fabhotels.com'],
     proxy: [
-        {
-            context: ["/admin/flightcrs/fabuser/**"],
-            target: "https://uat.fabmailers.in/",
-            secure: false,
-            changeOrigin: true
-          },
-          {
-            context: ["/admin/flightcrs/fabcrs/**"],
-            target: "https://uat.fabmailers.in/",
-            secure: false,
-            changeOrigin: true
-          },
           {
             context: ["/admin/flightcrs/flightaggregation/**"],
             target: "https://uat.fabmailers.in/",

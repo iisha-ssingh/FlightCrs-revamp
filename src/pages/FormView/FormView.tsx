@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getViewDetails } from './slice/form.slice';
+import { getConvenienceFee, getViewDetails, prefetchInit } from './slice/form.slice';
 import { isEmpty } from '../../utils/common';
 import { RootState } from '../../redux/store'; // Adjust this import path as needed
 import { Details, ComponentProps } from './utils/props';
@@ -12,6 +12,8 @@ const CreateFlightBookings: React.FC = () => {
 
   useEffect(() => {
     dispatch(getViewDetails());
+    dispatch(prefetchInit());
+    dispatch(getConvenienceFee());
   }, [dispatch]);
 
   const { 
@@ -28,7 +30,7 @@ const CreateFlightBookings: React.FC = () => {
 
   return (
     <div>
-      
+
     </div>
   );
 };

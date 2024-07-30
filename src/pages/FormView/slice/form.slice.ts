@@ -10,7 +10,8 @@ import {
   STOP_DETAILS,
   PASSENGER_DETAILS,
   PAYMENT_DETAILS,
-  PRICE_BREAKUP
+  PRICE_BREAKUP,
+  INITIAL_PREFETCH
 } from '../constants/formState';
 import { 
   corporateDetailsFormatter, 
@@ -19,10 +20,14 @@ import {
   flightDetailsFormatter 
 } from '../utils/dataFormatter';
 import { FormState, ViewData, ViewState } from '../utils/props';
+import { populatePrefetch } from '../utils/sagaFormatter';
+
 
 const initialState: ViewState = {
-  viewLoading: false,
-  viewError: false,
+  screenLoading: false,
+  screenError: false,
+  prefetch : { ...INITIAL_PREFETCH },
+  convenienceFee : {},
   journeyType: JSON.parse(JSON.stringify({ ...JOURNEY_TYPE })),
   corporateDetails: JSON.parse(JSON.stringify({ ...CORPORATE_DETAILS })),
   tripDetails: JSON.parse(JSON.stringify({ ...TRIP_MAPPING })),
@@ -39,7 +44,7 @@ const flightForm = createSlice({
   name: FLIGHT_FORM,
   initialState,
   reducers: {
-
+    // Form State update
     updateFormState: (state, action: PayloadAction<FormState>) => {
       const { component, field, value } = action.payload;
       if (component in state && typeof state[component] === 'object') {
@@ -48,11 +53,34 @@ const flightForm = createSlice({
       }
     },
 
-    getViewDetails: (state) => {
-      state.viewLoading = true;
-      state.viewError = false;
+    // Prefetch
+    prefetchInit : (state) => {
+      state.prefetch  = { ...INITIAL_PREFETCH };
+    },
+    prefetchSuccess : (state, action: PayloadAction<object>) => {
+      state.prefetch  = populatePrefetch(action.payload);
+    },
+    prefetchError : (state, action: PayloadAction<string>) => {
+      flightForm.caseReducers.prefetchInit(state);
     },
 
+
+    //Convenience fee
+    getConvenienceFee :( state ) => {
+      state.convenienceFee = {}
+    },
+    convenienceFeeSuccess : (state, action: PayloadAction<object>) => {
+      state.convenienceFee = {...action.payload};
+    },
+    convenienceFeeError : (state, action: PayloadAction<string>) => {
+      flightForm.caseReducers.getConvenienceFee(state);
+    },  
+
+    // View Details
+    getViewDetails: (state) => {
+      state.screenLoading = true;
+      state.screenError = false;
+    },
     viewDetailsSuccess: (state, action: PayloadAction<ViewData>) => {
       const viewData = action.payload ?? {};
       const { 
@@ -62,8 +90,8 @@ const flightForm = createSlice({
         bookingDetails = {}
       } = viewData;
 
-      state.viewLoading = false;
-      state.viewError = false;
+      state.screenLoading = false;
+      state.screenError = false;
       state.corporateDetails = {
         ...state.corporateDetails,
         ...corporateDetailsFormatter(state, corporateDetails, relationshipManager)
@@ -82,17 +110,23 @@ const flightForm = createSlice({
       };
     },
     viewDetailsFailure: (state, action: PayloadAction<string>) => {
-      state.viewLoading = false;
-      state.viewError = true;
+      state.screenLoading = false;
+      state.screenError = true;
     }
   }
 });
 
 export const {
   updateFormState,
+  prefetchInit,
+  prefetchSuccess,
+  prefetchError,
   getViewDetails,
   viewDetailsSuccess,
-  viewDetailsFailure
+  viewDetailsFailure,
+  getConvenienceFee,
+  convenienceFeeSuccess,
+  convenienceFeeError
 } = flightForm.actions;
 
 export default flightForm.reducer;

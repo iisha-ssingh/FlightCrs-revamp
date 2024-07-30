@@ -981,3 +981,19 @@ cancellationRefund: {
     disabled:true,
 },
 }
+
+
+export const INITIAL_PREFETCH = {
+  airlines:[],
+  stops:[],
+  cabinClasses:[],
+  paymentModes:[],
+  paymentOptions:[],
+  genders: [],
+  ticketingSources: [],
+  terminals: [],
+  isdCodes: [],
+  journeyTypes: [],
+  guestTypes: [],
+  seatTypes : []
+}

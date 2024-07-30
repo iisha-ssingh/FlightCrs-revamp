@@ -83,13 +83,21 @@ interface DetailItem {
   }
   
   interface ViewState extends ComponentProps{
-    viewLoading: boolean;
-    viewError: boolean;
+    screenLoading: boolean;
+    screenError: boolean;
+    prefetch: object;
+    convenienceFee : object;
   }
 
   interface ViewDetailsRequest {
     companyId: string;
     bookingId: string;
+  }
+
+  interface ConvenienceFeeRequest {
+    payload :{
+      companyId: string;
+    }
   }
   
   interface ApiResponse {
@@ -140,5 +148,6 @@ interface DetailItem {
     CorporateDetails,
     RelationshipManager,
     BookingDetails,
-    FlightDetails
+    FlightDetails,
+    ConvenienceFeeRequest
   }
