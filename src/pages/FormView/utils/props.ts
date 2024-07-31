@@ -1,10 +1,10 @@
-interface DetailItem {
+interface KeyValue {
     value: string;
-    [key: string]: any;
+    [key: string]: unknown;
   }
   
   interface Details {
-    [key: string]: DetailItem;
+    [key: string]: KeyValue;
   }
   
   interface ComponentProps {
@@ -74,35 +74,126 @@ interface DetailItem {
   }
 
 
-  interface ViewData {
+  interface ApiData {
     journeyType?: JourneyType;
     corporateDetails?: CorporateDetails;
     relationshipManager?: RelationshipManager;
     flightDetails?: FlightDetails;
     bookingDetails?: BookingDetails;
   }
+
+  type ConvenienceFees = {
+    convenienceFeeWithGst: number;
+    reissueConvenienceFeeWithGst: number;
+    cancellationConvenienceFeeWithGst: number;
+    internationalConvenienceFeeWithGst: number;
+    internationalReissueConvenienceFeeWithGst: number;
+    internationalCancellationConvenienceFeeWithGst: number;
+  };
+
+  type Company = {
+    uuid: string;
+    id: number;
+    companyName: string;
+    btcEnabled: boolean;
+    lastBtcBookingDate: string | null;
+    salesPocName: string | null;
+  };
+
+  type PrefetchData = {
+    airlines: Array<{ code: string; name: string }>;
+    stops: Array<{ id: string; name: string }>;
+    cabinClasses: Array<{ id: string; name: string }>;
+    paymentModes: Array<{ id: string; name: string }>;
+    paymentOptions: Array<{ id: string; name: string }>;
+    genders: Array<{ id: string; name: string }>;
+    ticketingSources: Array<{ id: string; name: string }>;
+    terminals: Array<{ id: string; name: string }>;
+    isdCodes: Array<{ code: string; country: string }>;
+    journeyTypes: Array<{ id: string; name: string }>;
+    guestType: Array<{ id: string; name: string }>;
+    seatTypes: Array<{ id: string; name: string }>;
+  };
   
-  interface ViewState extends ComponentProps{
+  interface User {
+    userId: string;
+    username: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    mobile: string;
+    countryCode: string;
+    panNo: string | null;
+    corporateMapping: CorporateMapping[];
+  }
+  
+  interface CorporateMapping {
+    companyId: string;
+    status: boolean;
+    mappingId: string;
+  }
+  interface GstinList {
+    stateId: number;
+    gstin: string;
+    address: string;
+    entityName: string | null;
+    stateName: string;
+    pinCode: string;
+    isDefault: boolean;
+  }
+  
+  interface SubtripPayload extends CompanyIdPayload {
+    masterTripId: string;
+    isBundle : boolean;
+  }
+
+  interface CitySuggestion {
+    city: string;
+    airportCode: string;
+    airportName: string;
+    northEastLat: number;
+    northEastLng: number;
+    southWestLat: number;
+    southWestLng: number;
+    cityId: number;
+    state: string;
+    country: string;
+  }
+
+  type CitySuggestionResponse = {
+    suggestions: CityAutoSuggestPayload[];
+  }
+
+  interface FormView extends ComponentProps{
     screenLoading: boolean;
     screenError: boolean;
-    prefetch: object;
-    convenienceFee : object;
+    prefetch: PrefetchData;
+    convenienceFee: ConvenienceFees | Object;    
+    companyName : Company[] | Array<Object>;
+    customConfig : CustomConfig | Object;
+    managerList : User[] | Array<Object>;
+    gstInList : GstinList[] | Array<Object>;
+    subtripDetails : Array<Object>; //TODO: Add type
+    cityAutosuggestList : CitySuggestion[] | Array<Object>; 
   }
+
 
   interface ViewDetailsRequest {
     companyId: string;
     bookingId: string;
   }
 
-  interface ConvenienceFeeRequest {
-    payload :{
-      companyId: string;
-    }
+  type CompanyIdPayload = {
+    companyId: string | number
+  }
+
+  type CityAutoSuggestPayload = {
+    query: string | null
   }
   
   interface ApiResponse {
     data?: {
-      data?: any;
+      data?: unknown;
     },
     status?: number;
   }
@@ -128,13 +219,65 @@ interface DetailItem {
   }
 
   interface FormState {
-    component: keyof ViewState, 
+    component: keyof FormView, 
     field: string; 
     value: any 
   }
 
+  interface CustomConfig {
+    tripCustomFieldConfigs: TripCustomFieldConfig[] | null;
+    tripStaticData: StaticData | null;
+    userCustomFieldConfigs: UserCustomFieldConfig[] | null;
+    userStaticData: StaticData | null;
+  }
+  interface CustomFieldConfig{
+    fieldName: string;
+    fieldValue: null;
+    fieldType: KeyValue;
+    dropDownValues: string[] | null;
+    mandatory: KeyValue;
+    createdOn: string;
+    applicableOn: KeyValue[];
+  }
+  
+  interface UserCustomFieldConfig extends CustomFieldConfig {
+    userCustomFieldConfigId: string;
+    userCustomFieldId: null;
+  }
+  interface TripCustomFieldConfig extends CustomFieldConfig {
+    tripCustomFieldConfigId: string;
+    tripCustomFieldId: null;
+  }
+  
+  type StaticData = {
+    fieldType: KeyValue[];
+    applicableOn: KeyValue[];
+    mandatory: KeyValue[];
+    actions: KeyValue[];
+}
+
+interface CompanyIdState {
+  corporateDetails: {
+    companyName: {
+      value?: {
+        companyId?: string;
+      };
+    };
+  };
+}
+ 
+
+interface MasterTripIdState {
+  tripDetails: {
+    tripId: {
+      value: string;
+    };
+  };
+}
+ 
+
+
   export type{
-    ViewState,
     Details,
     State,
     ComponentProps,
@@ -143,11 +286,21 @@ interface DetailItem {
     ErrorResponse,
     ViewDetailsParams,
     MoleculeType,
-    ViewData,
+    ApiData,
     FormState,
     CorporateDetails,
     RelationshipManager,
     BookingDetails,
     FlightDetails,
-    ConvenienceFeeRequest
+    CompanyIdPayload,
+    Company,
+    FormView,
+    CustomConfig,
+    User,
+    CompanyIdState,
+    SubtripPayload,
+    MasterTripIdState,
+    CityAutoSuggestPayload,
+    GstinList,
+    CitySuggestionResponse
   }

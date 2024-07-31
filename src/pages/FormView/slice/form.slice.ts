@@ -20,14 +20,32 @@ import {
   flightDetailsFormatter ,
   populatePrefetch
 } from '../utils/apiDataFormatter';
-import { FormState, ViewData, ViewState } from '../utils/props';
+import { 
+  FormState, 
+  ApiData, 
+  FormView, 
+  Company, 
+  User, 
+  CustomConfig, 
+  CityAutoSuggestPayload, 
+  GstinList,
+  CitySuggestionResponse
+} from '../utils/props';
 
 
-const initialState: ViewState = {
+const initialState: FormView = {
   screenLoading: false,
   screenError: false,
-  prefetch : { ...INITIAL_PREFETCH },
+  prefetch : {
+    ...INITIAL_PREFETCH,
+  },
   convenienceFee : {},
+  companyName : [],
+  customConfig : {},
+  managerList : [],
+  gstInList:[],
+  subtripDetails : [],
+  cityAutosuggestList : [],
   journeyType: JSON.parse(JSON.stringify({ ...JOURNEY_TYPE })),
   corporateDetails: JSON.parse(JSON.stringify({ ...CORPORATE_DETAILS })),
   tripDetails: JSON.parse(JSON.stringify({ ...TRIP_MAPPING })),
@@ -61,7 +79,7 @@ const flightForm = createSlice({
       state.prefetch  = populatePrefetch(action.payload);
     },
     prefetchError : (state, action: PayloadAction<string>) => {
-      flightForm.caseReducers.prefetchInit(state);
+      state.prefetch  = { ...INITIAL_PREFETCH };
     },
 
 
@@ -73,15 +91,91 @@ const flightForm = createSlice({
       state.convenienceFee = {...action.payload};
     },
     convenienceFeeError : (state, action: PayloadAction<string>) => {
-      flightForm.caseReducers.getConvenienceFee(state);
+      state.convenienceFee = {}
     },  
+
+    //Company name
+    getCompanyName : (state) => {
+      state.companyName = []
+    },
+    companyNameSuccess : (state, action: PayloadAction<Company[]>) => {
+      state.companyName = [...action.payload];
+    },
+    companyNameError : (state, action: PayloadAction<string>) => {
+      state.convenienceFee = {}
+      state.corporateDetails.companyName = {
+        ...state.corporateDetails.companyName,
+        value: '',
+        isError : true,
+        errorMessage: action.payload
+      }
+    },
+
+    //Custom config
+    getCustomConfig : (state) => {
+      state.customConfig = {}
+    },
+    customConfigSuccess : (state, action: PayloadAction<CustomConfig | object>) => {
+      state.customConfig = {...action.payload};
+    },
+    customConfigError : (state, action: PayloadAction<string>) => {
+      state.customConfig = {}
+    },
+
+    //Manager List
+    getManagerList : (state) => {
+      state.managerList = []
+    },
+    managerListSuccess : (state, action: PayloadAction<User[] | []>) => {
+      state.managerList = [...action.payload];
+    },
+    managerListError : (state, action: PayloadAction<string>) => {
+      state.managerList = []
+    },
+
+     //GstIn
+    getGstIn : (state) => {
+      state.gstInList = []
+    },
+    gstInSuccess : (state, action: PayloadAction<GstinList[] | []>) => {
+      state.gstInList = [...action.payload];
+    },
+    gstInError : (state, action: PayloadAction<string>) => {
+      state.gstInList = []
+    },
+
+      //Subtrip details
+      getSubtripDetails : (state) => {
+        state.subtripDetails = []
+      },
+      subtripSuccess : (state, action: PayloadAction<Array<object> | null>) => {
+        state.subtripDetails = [...(Array.isArray(action.payload) ? action.payload : [])];
+      },
+      subtripError : (state, action: PayloadAction<string>) => {
+        state.subtripDetails = []
+      },
+
+        //City autosuggest
+        getCityAutosuggest : (state, action : PayloadAction<CityAutoSuggestPayload | object> ) => {
+          state.cityAutosuggestList = []
+        },
+        cityAutosuggestSuccess: (state, action: PayloadAction<CitySuggestionResponse | {}>) => {
+          if ('suggestions' in action.payload) {
+            state.cityAutosuggestList = [...action.payload.suggestions];
+          } else {
+            state.cityAutosuggestList = [];
+          }
+        },
+        cityAutosuggestError : (state, action: PayloadAction<string>) => {
+          state.cityAutosuggestList = []
+        },
 
     // View Details
     getViewDetails: (state) => {
       state.screenLoading = true;
       state.screenError = false;
     },
-    viewDetailsSuccess: (state, action: PayloadAction<ViewData>) => {
+    viewDetailsSuccess: (state, action: PayloadAction<ApiData>) => {
       const viewData = action.payload ?? {};
       const { 
         corporateDetails = {}, 
@@ -126,7 +220,22 @@ export const {
   viewDetailsFailure,
   getConvenienceFee,
   convenienceFeeSuccess,
-  convenienceFeeError
+  convenienceFeeError,
+  getCustomConfig,
+  customConfigSuccess,
+  customConfigError,
+  getManagerList,
+  managerListSuccess,
+  managerListError,
+  getGstIn,
+  gstInSuccess,
+  gstInError,
+  getSubtripDetails,
+  subtripSuccess,
+  subtripError,
+  getCityAutosuggest,
+  cityAutosuggestSuccess,
+  cityAutosuggestError
 } = flightForm.actions;
 
 export default flightForm.reducer;

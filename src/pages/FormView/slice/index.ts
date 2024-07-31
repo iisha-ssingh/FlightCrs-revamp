@@ -1,2 +1,2 @@
-export {default as view} from './form.slice';
+export {default as formView} from './form.slice';
 

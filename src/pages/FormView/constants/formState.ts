@@ -995,5 +995,6 @@ export const INITIAL_PREFETCH = {
   isdCodes: [],
   journeyTypes: [],
   guestTypes: [],
-  seatTypes : []
+  seatTypes : [],
+  guestType : []
 }
