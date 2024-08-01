@@ -4,15 +4,19 @@ import {
   ApiResponse, 
   CompanyIdPayload, 
   ApiData, 
-  ViewDetailsParams, 
   SubtripPayload, 
-  CityAutoSuggestPayload 
+  CityAutoSuggestPayload, 
+  CorporateUserAutosuggest,
+  DownloadDocumentRequest,
+  DownloadVoucherRequest,
+  GstDetails,
+  BookingIdPayload
 } from '../utils/props';
 
 const Api = {
-  getViewDetails :  (params: ViewDetailsParams): Promise<ApiResponse> => {
+  getViewDetails :  (params: BookingIdPayload): Promise<ApiResponse> => {
     const api = new Request(false);
-    return api.post(URL.viewDetails, params.payload, URL.viewDetails);
+    return api.post(URL.viewDetails, params, URL.viewDetails);
   },
   getPrefetch :  (): Promise<ApiResponse> => {
     const api = new Request(false);
@@ -45,7 +49,32 @@ const Api = {
   cityAutosuggest : (params: CityAutoSuggestPayload): Promise<ApiResponse> => {
     const api = new Request(false);
     return api.get(URL.cityAutosuggest, params, URL.cityAutosuggest);
+  },
+  corporateUserSearch : (params: CorporateUserAutosuggest): Promise<ApiResponse> => {
+    const api = new Request(false);
+    return api.get(URL.corporateUserSearch, params, URL.corporateUserSearch);
+  },
+  downloadDocument : (params: DownloadDocumentRequest): Promise<ApiResponse> => {
+    const api = new Request(false);
+    return api.get(URL.downloadDocument, params, URL.downloadDocument);
+  },
+  downloadVoucher : (params: DownloadVoucherRequest): Promise<ApiResponse> => {
+    const api = new Request(false);
+    return api.get(URL.downloadVoucher, params, URL.downloadVoucher);
+  },
+  editGst : (params: GstDetails): Promise<ApiResponse> => {
+    const api = new Request(false);
+    return api.post(URL.editGst, params, URL.editGst);
+  },
+  editGstAuthorisation : (): Promise<ApiResponse> => {
+    const api = new Request(false);
+    return api.get(URL.editGstAuthorisation, {}, URL.editGstAuthorisation);
+  },
+  cancelModificationRequest : (params : BookingIdPayload): Promise<ApiResponse> => {
+    const api = new Request(false);
+    return api.post(URL.cancelModificationRequest, params, URL.cancelModificationRequest);
   }
+
 }
 
 export  {Api};

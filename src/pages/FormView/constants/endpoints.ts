@@ -8,4 +8,10 @@ export const URL = {
     gstinList : '/flightaggregation/v1/corporate/gstins',
     subtripDetails: '/flightaggregation/v1/autosuggestion/flightSubTrip/details',
     cityAutosuggest: '/flightaggregation/v1/autosuggestion/flight/search',
+    corporateUserSearch : 'flightaggregation/v1/corporate/user/search',
+    downloadDocument : '/flightaggregation/v1/flight/crs/booking/documents/download',
+    downloadVoucher : 'flightaggregation/v1/flight/crs/booking/voucher/download',
+    editGst : '/flightaggregation/v1/flight/crs/update/gst',
+    editGstAuthorisation : '/flightaggregation/v1/flight/crs/edit',
+    cancelModificationRequest : '/flightaggregation/v1/flight/crs/booking/request/cancel'
   }

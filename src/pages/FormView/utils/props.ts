@@ -164,9 +164,17 @@ interface KeyValue {
     suggestions: CityAutoSuggestPayload[];
   }
 
+  type GenericResponse = {
+    message: string;
+    data: string;
+    statusCode : number
+  }
+
   interface FormView extends ComponentProps{
     screenLoading: boolean;
     screenError: boolean;
+    apiError : boolean;
+    apiMessage : string;
     prefetch: PrefetchData;
     convenienceFee: ConvenienceFees | Object;    
     companyName : Company[] | Array<Object>;
@@ -174,7 +182,11 @@ interface KeyValue {
     managerList : User[] | Array<Object>;
     gstInList : GstinList[] | Array<Object>;
     subtripDetails : Array<Object>; //TODO: Add type
-    cityAutosuggestList : CitySuggestion[] | Array<Object>; 
+    cityAutosuggestList : CitySuggestion[] | Array<Object>;
+    corporateUsersList : CorporateUser[] | Array<Object>;
+    corporateUserError : string;
+    downloadDocument : GenericResponse | Object;
+    downloadVoucher : GenericResponse | Object;
   }
 
 
@@ -190,7 +202,31 @@ interface KeyValue {
   type CityAutoSuggestPayload = {
     query: string | null
   }
+
+  type CorporateUserAutosuggest = {
+    query: string;
+    companyId : string | number;
+  }
   
+  type DownloadDocumentRequest = {
+    masterBookingId?: string;
+    docType : string ;
+  }
+  
+  type DownloadVoucherRequest = {
+    masterBookingId?: string;
+    companyId : string ;
+  }
+  
+  interface GstDetails {
+    bookingId: string;
+    gstEntityName: string;
+    gSTNumber: string;
+    gSTCompanyName: null;
+    gSTCompanyAddress: string;
+    gSTCompanyPinCode: string;
+  }
+
   interface ApiResponse {
     data?: {
       data?: unknown;
@@ -206,11 +242,9 @@ interface KeyValue {
     };
   }
 
-  interface ViewDetailsParams {
-    payload: {
-      companyId: string;
+  interface BookingIdPayload {
+      companyId?: string;
       bookingId: string;
-    };
   }
   
   interface MoleculeType{
@@ -257,34 +291,71 @@ interface KeyValue {
 }
 
 interface CompanyIdState {
-  corporateDetails: {
-    companyName: {
-      value?: {
-        companyId?: string;
+  formView:{
+    corporateDetails: {
+      companyName: {
+        value?: {
+          companyId?: string;
+        };
       };
     };
-  };
+  }
+}
+
+interface BookingIdState {
+  formView:{
+    bookingDetails: {
+      bookingId: {
+        value?: string;
+      };
+    };
+  }
 }
  
 
 interface MasterTripIdState {
-  tripDetails: {
-    tripId: {
-      value: string;
+  formView:{
+    tripDetails: {
+      tripId: {
+        value: string;
+      };
     };
-  };
+  }
 }
  
+interface CorporateUser {
+  userId: string;
+  title: string;
+  firstName: string;
+  middleName: string | null;
+  lastName: string;
+  fullName: string;
+  dateOfBirth: string | null;
+  email: string;
+  countryCode: string;
+  mobile: string;
+  gender: string;
+  nationality: string;
+  passportNumber: string | null;
+  passportExpiryDate: string | null;
+  isSaveDetails: boolean;
+  corporateUserType: KeyValue;
+  guestType: string | null;
+  reportsTo: string | null;
+  userCustomFields: UserCustomFieldConfig[];
+  isLeadPax: boolean | null;
+}
 
 
   export type{
+    StateDetail,
     Details,
     State,
     ComponentProps,
     ViewDetailsRequest,
     ApiResponse,
     ErrorResponse,
-    ViewDetailsParams,
+    BookingIdPayload,
     MoleculeType,
     ApiData,
     FormState,
@@ -302,5 +373,12 @@ interface MasterTripIdState {
     MasterTripIdState,
     CityAutoSuggestPayload,
     GstinList,
-    CitySuggestionResponse
+    CitySuggestionResponse,
+    CorporateUserAutosuggest,
+    CorporateUser,
+    GenericResponse,
+    DownloadDocumentRequest,
+    DownloadVoucherRequest,
+    GstDetails,
+    BookingIdState
   }

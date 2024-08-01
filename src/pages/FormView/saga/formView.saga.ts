@@ -1,15 +1,22 @@
 import {Api} from './Api';
-import { call, put, select, takeLatest } from 'redux-saga/effects';
+import { call, debounce, put, select, takeLatest } from 'redux-saga/effects';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { 
   ApiResponse, 
+  BookingIdState, 
   CityAutoSuggestPayload,
   CitySuggestionResponse,
   CompanyIdState, 
+  CorporateUser, 
+  CorporateUserAutosuggest, 
   CustomConfig, 
+  GenericResponse, 
+  DownloadDocumentRequest, 
+  DownloadVoucherRequest, 
   ErrorResponse, 
   GstinList, 
   MasterTripIdState, 
+  StateDetail, 
   User, 
   ViewDetailsRequest 
 } from '../utils/props';
@@ -38,10 +45,26 @@ import {
   getSubtripDetails,
   cityAutosuggestSuccess,
   cityAutosuggestError,
-  getCityAutosuggest
+  getCityAutosuggest,
+  getCorporateUsers,
+  corporateUsersSuccess,
+  corporateUsersError,
+  downloadDocumentSuccess,
+  downloadDocumentError,
+  downloadDocumentAction,
+  downloadVoucherSuccess,
+  downloadVoucherError,
+  downloadVoucherAction,
+  editGstAction,
+  postSuccess,
+  postError,
+  editGstAuthorisationAction,
+  cancelModificationRequestAction
 } from '../slice/form.slice';
 //TODO: remove constant value from companyIdSelector and masterTripIdSelector
-const companyIdSelector = (state: CompanyIdState) => state?.corporateDetails?.companyName?.value?.companyId || '11237';
+const companyIdSelector = (state: CompanyIdState) => state?.formView?.corporateDetails?.companyName?.value?.companyId  || '11237';
+const masterTripIdSelector = (state: MasterTripIdState) => state?.formView?.tripDetails?.tripId?.value  || 'TPFHURMHU';
+const bookingIdSelector = (state: BookingIdState) => state?.formView?.bookingDetails?.bookingId?.value  || 'FXHPJDX';
 
 function* fetchPrefetchSaga() {
   try {
@@ -109,7 +132,6 @@ function* fetchGSTList() {
 
 function* fetchSubtripDetails() {
   const companyId: string | undefined = yield select(companyIdSelector);
-  const masterTripIdSelector = (state: MasterTripIdState) => state?.tripDetails?.tripId?.value || 'FVFNFVU';
   const masterTripId: string | undefined = yield select(masterTripIdSelector);
   
   const payload = {
@@ -129,7 +151,6 @@ function* fetchSubtripDetails() {
 }
 
 function* fetchCities(action: PayloadAction<CityAutoSuggestPayload>) {
-  console.log('fetchCities', action);
   try {
     const response: ApiResponse = yield call(Api.cityAutosuggest, action.payload);
     const content = (response?.data?.data ?? []) as CitySuggestionResponse;
@@ -141,12 +162,109 @@ function* fetchCities(action: PayloadAction<CityAutoSuggestPayload>) {
   }
 }
 
+function* fetchCorporateUsers(action: PayloadAction<CorporateUserAutosuggest>) {
+  try {
+    const response: ApiResponse = yield call(Api.corporateUserSearch, action.payload);
+    const content = (response?.data?.data ?? []) as CorporateUser[] | [];
+    yield put(corporateUsersSuccess(content));
+  } catch (error) {
+    const errorResponse = (error as ErrorResponse).response ?? {};
+    const errorMessage = errorResponse?.data?.message ?? "An error occurred";
+    yield put(corporateUsersError(errorMessage));
+  }
+}
+
+function* downloadDocument(action: PayloadAction<DownloadDocumentRequest>) {
+  const masterTripId: string | undefined = yield select(masterTripIdSelector);
+  
+  const payload = {
+    masterBookingId: masterTripId ?? '',
+    docType: action.payload.docType,
+  }
+  try {
+    const response: ApiResponse = yield call(Api.downloadDocument, payload);
+    const content = (response?.data ?? []) as GenericResponse ;
+    yield put(downloadDocumentSuccess(content));
+  } catch (error) {
+    const errorResponse = (error as ErrorResponse).response ?? {};
+    const errorMessage = errorResponse?.data?.message ?? "An error occurred";
+    yield put(downloadDocumentError(errorMessage));
+  }
+}
+
+function* downloadVoucher(action: PayloadAction<DownloadVoucherRequest>) {
+  const masterTripId: string | undefined = yield select(masterTripIdSelector);
+  const companyId: string | undefined = yield select(companyIdSelector);
+  
+  const payload = {
+    masterBookingId: masterTripId ?? '',
+    companyId : companyId ??  ''
+  }
+  try {
+    const response: ApiResponse = yield call(Api.downloadVoucher, payload);
+    const content = (response?.data ?? []) as GenericResponse ;
+    yield put(downloadVoucherSuccess(content));
+  } catch (error) {
+    const errorResponse = (error as ErrorResponse).response ?? {};
+    const errorMessage = errorResponse?.data?.message ?? "An error occurred";
+    yield put(downloadVoucherError(errorMessage));
+  }
+}
+
+function* editGst() {
+  const corporateDetailsSelector = (state: CompanyIdState) => state?.formView?.corporateDetails
+  const corporateDetails: StateDetail = yield select(corporateDetailsSelector);
+  const { gstEntityName, gSTNumber, gSTCompanyName, gSTCompanyAddress, gSTCompanyPinCode} = corporateDetails || {}
+  const bookingId: string = yield select(bookingIdSelector);
+
+  const payload = {
+    bookingId: bookingId,
+    gstEntityName: gstEntityName.value || 'Ajay entity 2',
+    gSTNumber : gSTNumber.value ||'06XYZDD3009C2ZE',
+    gSTCompanyName : gSTCompanyName.value ||null,
+    gSTCompanyAddress : gSTCompanyAddress.value ||'Test new GST 1',
+    gSTCompanyPinCode : gSTCompanyPinCode.value ||'122001'
+  }
+
+  try {
+    const response: ApiResponse = yield call(Api.editGst, payload);
+    const content = (response?.data ?? []) as GenericResponse ;
+    yield put(postSuccess(content));
+  } catch (error) {
+    const errorResponse = (error as ErrorResponse).response ?? {};
+    const errorMessage = errorResponse?.data?.message ?? "An error occurred";
+    yield put(postError(errorMessage));
+  }
+}
+
+function* editGstAuthorisation() {
+  try {
+    const response: ApiResponse = yield call(Api.editGstAuthorisation);
+  } catch (error) {
+    const errorResponse = (error as ErrorResponse).response ?? {};
+    const errorMessage = errorResponse?.data?.message ?? "An error occurred";
+    yield put(postError(errorMessage));
+  }
+}
+
+function* cancelModificationRequest() {
+  const bookingId: string = yield select(bookingIdSelector);
+
+  try {
+    const response: ApiResponse = yield call(Api.cancelModificationRequest, {bookingId: bookingId ?? ''});
+    const content = (response?.data ?? []) as GenericResponse ;
+    yield put(postSuccess(content));
+  } catch (error) {
+    const errorResponse = (error as ErrorResponse).response ?? {};
+    const errorMessage = errorResponse?.data?.message ?? "An error occurred";
+    yield put(postError(errorMessage));
+  }
+}
+
 function* fetchViewDetails() {
   const tempRequest = {
-    payload: {
       companyId: "",
       bookingId: "FVFNFVU"
-    }
   };
 
   try {
@@ -168,5 +286,11 @@ export default function* FlightBookingCreate() {
   yield takeLatest(getManagerList.type, fetchManagerList);
   yield takeLatest(getGstIn.type, fetchGSTList);
   yield takeLatest(getSubtripDetails.type, fetchSubtripDetails);
-  yield takeLatest(getCityAutosuggest.type, fetchCities);
+  yield debounce(300, getCityAutosuggest.type, fetchCities);
+  yield debounce(300, getCorporateUsers.type, fetchCorporateUsers);
+  yield takeLatest(downloadDocumentAction.type, downloadDocument);
+  yield takeLatest(downloadVoucherAction.type, downloadVoucher);
+  yield takeLatest(editGstAction.type, editGst);
+  yield takeLatest(editGstAuthorisationAction.type, editGstAuthorisation);
+  yield takeLatest(cancelModificationRequestAction.type, cancelModificationRequest);
 }

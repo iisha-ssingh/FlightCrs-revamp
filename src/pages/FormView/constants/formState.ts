@@ -148,6 +148,30 @@ export const TRIP_MAPPING_INTL= {
   }
 
 export const BOOKING_DETAILS = {
+  bookingId: {
+    componentType: 'input',
+    value: "",
+    type:"text",
+    placeholder: 'Booking Id',
+    dynamicPlaceholder: true,
+    isError: false,
+    required: true,
+    requiredText: '*',
+    disabled: true,
+    isVisible: ['modify','view', 'edit']
+},
+bookingStatus: {
+  componentType: 'input',
+  value: "",
+  type:"text",
+  placeholder: 'Booking Status',
+  dynamicPlaceholder: true,
+  isError: false,
+  required: true,
+  requiredText: '*',
+  disabled: true,
+  isVisible: ['modify','view', 'edit']
+},
   origin: {
     componentType: 'autoSuggest-citySearch',
     inputProps: {

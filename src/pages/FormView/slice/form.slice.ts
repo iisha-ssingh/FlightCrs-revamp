@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { FLIGHT_FORM } from '../constants/strings';
-import { 
-  BOOKING_DETAILS, 
-  CORPORATE_DETAILS, 
-  FLIGHT_DETAILS, 
+import {
+  BOOKING_DETAILS,
+  CORPORATE_DETAILS,
+  FLIGHT_DETAILS,
   TRIP_MAPPING,
   JOURNEY_TYPE,
   BAGGAGE_DETAILS,
@@ -13,49 +13,61 @@ import {
   PRICE_BREAKUP,
   INITIAL_PREFETCH
 } from '../constants/formState';
-import { 
-  corporateDetailsFormatter, 
-  tripDetailsFormatter, 
+import {
+  corporateDetailsFormatter,
+  tripDetailsFormatter,
   bookingDetailsFormatter,
-  flightDetailsFormatter ,
+  flightDetailsFormatter,
   populatePrefetch
 } from '../utils/apiDataFormatter';
-import { 
-  FormState, 
-  ApiData, 
-  FormView, 
-  Company, 
-  User, 
-  CustomConfig, 
-  CityAutoSuggestPayload, 
+import {
+  FormState,
+  ApiData,
+  FormView,
+  Company,
+  User,
+  CustomConfig,
+  CityAutoSuggestPayload,
   GstinList,
-  CitySuggestionResponse
+  CitySuggestionResponse,
+  CorporateUserAutosuggest,
+  CorporateUser,
+  GenericResponse,
+  DownloadDocumentRequest,
 } from '../utils/props';
+import { isEmpty } from '../../../utils/common';
+import { strings } from '../../../utils/strings';
 
 
 const initialState: FormView = {
   screenLoading: false,
   screenError: false,
-  prefetch : {
+  apiError : false,
+  apiMessage : '',
+  prefetch: {
     ...INITIAL_PREFETCH,
   },
-  convenienceFee : {},
-  companyName : [],
-  customConfig : {},
-  managerList : [],
-  gstInList:[],
-  subtripDetails : [],
-  cityAutosuggestList : [],
+  convenienceFee: {},
+  companyName: [],
+  customConfig: {},
+  managerList: [],
+  gstInList: [],
+  subtripDetails: [],
+  cityAutosuggestList: [],
+  corporateUsersList: [],
+  corporateUserError : '',
+  downloadDocument : {},
+  downloadVoucher : {},
   journeyType: JSON.parse(JSON.stringify({ ...JOURNEY_TYPE })),
   corporateDetails: JSON.parse(JSON.stringify({ ...CORPORATE_DETAILS })),
   tripDetails: JSON.parse(JSON.stringify({ ...TRIP_MAPPING })),
   bookingDetails: JSON.parse(JSON.stringify({ ...BOOKING_DETAILS })),
   flightDetails: JSON.parse(JSON.stringify({ ...FLIGHT_DETAILS })),
-  stopDetails : JSON.parse(JSON.stringify({ ...STOP_DETAILS })),
-  baggageDetails : JSON.parse(JSON.stringify({ ...BAGGAGE_DETAILS })),
-  guestDetails : JSON.parse(JSON.stringify({ ...PASSENGER_DETAILS })),
-  paymentMode : JSON.parse(JSON.stringify({ ...PAYMENT_DETAILS })),
-  priceBreakup : JSON.parse(JSON.stringify({ ...PRICE_BREAKUP}))
+  stopDetails: JSON.parse(JSON.stringify({ ...STOP_DETAILS })),
+  baggageDetails: JSON.parse(JSON.stringify({ ...BAGGAGE_DETAILS })),
+  guestDetails: JSON.parse(JSON.stringify({ ...PASSENGER_DETAILS })),
+  paymentMode: JSON.parse(JSON.stringify({ ...PAYMENT_DETAILS })),
+  priceBreakup: JSON.parse(JSON.stringify({ ...PRICE_BREAKUP }))
 };
 
 const flightForm = createSlice({
@@ -72,103 +84,164 @@ const flightForm = createSlice({
     },
 
     // Prefetch
-    prefetchInit : (state) => {
-      state.prefetch  = { ...INITIAL_PREFETCH };
+    prefetchInit: (state) => {
+      state.prefetch = { ...INITIAL_PREFETCH };
     },
-    prefetchSuccess : (state, action: PayloadAction<object>) => {
-      state.prefetch  = populatePrefetch(action.payload);
+    prefetchSuccess: (state, action: PayloadAction<object>) => {
+      state.prefetch = populatePrefetch(action.payload);
     },
-    prefetchError : (state, action: PayloadAction<string>) => {
-      state.prefetch  = { ...INITIAL_PREFETCH };
+    prefetchError: (state, action: PayloadAction<string>) => {
+      state.prefetch = { ...INITIAL_PREFETCH };
     },
 
 
     //Convenience fee
-    getConvenienceFee :( state ) => {
+    getConvenienceFee: (state) => {
       state.convenienceFee = {}
     },
-    convenienceFeeSuccess : (state, action: PayloadAction<object>) => {
-      state.convenienceFee = {...action.payload};
+    convenienceFeeSuccess: (state, action: PayloadAction<object>) => {
+      state.convenienceFee = { ...action.payload };
     },
-    convenienceFeeError : (state, action: PayloadAction<string>) => {
+    convenienceFeeError: (state, action: PayloadAction<string>) => {
       state.convenienceFee = {}
-    },  
+    },
 
     //Company name
-    getCompanyName : (state) => {
+    getCompanyName: (state) => {
       state.companyName = []
     },
-    companyNameSuccess : (state, action: PayloadAction<Company[]>) => {
+    companyNameSuccess: (state, action: PayloadAction<Company[]>) => {
       state.companyName = [...action.payload];
     },
-    companyNameError : (state, action: PayloadAction<string>) => {
+    companyNameError: (state, action: PayloadAction<string>) => {
       state.convenienceFee = {}
       state.corporateDetails.companyName = {
         ...state.corporateDetails.companyName,
         value: '',
-        isError : true,
+        isError: true,
         errorMessage: action.payload
       }
     },
 
     //Custom config
-    getCustomConfig : (state) => {
+    getCustomConfig: (state) => {
       state.customConfig = {}
     },
-    customConfigSuccess : (state, action: PayloadAction<CustomConfig | object>) => {
-      state.customConfig = {...action.payload};
+    customConfigSuccess: (state, action: PayloadAction<CustomConfig | object>) => {
+      state.customConfig = { ...action.payload };
     },
-    customConfigError : (state, action: PayloadAction<string>) => {
+    customConfigError: (state, action: PayloadAction<string>) => {
       state.customConfig = {}
     },
 
     //Manager List
-    getManagerList : (state) => {
+    getManagerList: (state) => {
       state.managerList = []
     },
-    managerListSuccess : (state, action: PayloadAction<User[] | []>) => {
+    managerListSuccess: (state, action: PayloadAction<User[] | []>) => {
       state.managerList = [...action.payload];
     },
-    managerListError : (state, action: PayloadAction<string>) => {
+    managerListError: (state, action: PayloadAction<string>) => {
       state.managerList = []
     },
 
-     //GstIn
-    getGstIn : (state) => {
+    //GstIn
+    getGstIn: (state) => {
       state.gstInList = []
     },
-    gstInSuccess : (state, action: PayloadAction<GstinList[] | []>) => {
+    gstInSuccess: (state, action: PayloadAction<GstinList[] | []>) => {
       state.gstInList = [...action.payload];
     },
-    gstInError : (state, action: PayloadAction<string>) => {
+    gstInError: (state, action: PayloadAction<string>) => {
       state.gstInList = []
     },
 
-      //Subtrip details
-      getSubtripDetails : (state) => {
-        state.subtripDetails = []
-      },
-      subtripSuccess : (state, action: PayloadAction<Array<object> | null>) => {
-        state.subtripDetails = [...(Array.isArray(action.payload) ? action.payload : [])];
-      },
-      subtripError : (state, action: PayloadAction<string>) => {
-        state.subtripDetails = []
-      },
+    //Subtrip details
+    getSubtripDetails: (state) => {
+      state.subtripDetails = []
+    },
+    subtripSuccess: (state, action: PayloadAction<Array<object> | null>) => {
+      state.subtripDetails = [...(Array.isArray(action.payload) ? action.payload : [])];
+    },
+    subtripError: (state, action: PayloadAction<string>) => {
+      state.subtripDetails = []
+    },
 
-        //City autosuggest
-        getCityAutosuggest : (state, action : PayloadAction<CityAutoSuggestPayload | object> ) => {
-          state.cityAutosuggestList = []
-        },
-        cityAutosuggestSuccess: (state, action: PayloadAction<CitySuggestionResponse | {}>) => {
-          if ('suggestions' in action.payload) {
-            state.cityAutosuggestList = [...action.payload.suggestions];
-          } else {
-            state.cityAutosuggestList = [];
-          }
-        },
-        cityAutosuggestError : (state, action: PayloadAction<string>) => {
-          state.cityAutosuggestList = []
-        },
+    //City autosuggest
+    getCityAutosuggest: (state, action: PayloadAction<CityAutoSuggestPayload | object>) => {
+      state.cityAutosuggestList = []
+    },
+    cityAutosuggestSuccess: (state, action: PayloadAction<CitySuggestionResponse | {}>) => {
+      if ('suggestions' in action.payload) {
+        state.cityAutosuggestList = [...action.payload.suggestions];
+      } else {
+        state.cityAutosuggestList = [];
+      }
+    },
+    cityAutosuggestError: (state, action: PayloadAction<string>) => {
+      state.cityAutosuggestList = []
+    },
+
+     //City autosuggest
+     getCorporateUsers: (state, action: PayloadAction<CorporateUserAutosuggest | object>) => {
+      state.corporateUsersList = []
+    },
+    corporateUsersSuccess: (state, action: PayloadAction<CorporateUser[] | []>) => {
+      state.corporateUsersList = [...action.payload]
+      state.corporateUserError = isEmpty(action?.payload) ? strings.NO_USER_FOUND : ''
+    },
+    corporateUsersError: (state, action: PayloadAction<string>) => {
+      state.corporateUsersList = [];
+      state.corporateUserError = action.payload
+    },
+
+    //Download document
+    downloadDocumentAction : (state, action: PayloadAction<DownloadDocumentRequest>) => {
+      state.downloadDocument = {}
+    },
+    downloadDocumentSuccess: (state, action: PayloadAction<GenericResponse>) => {
+      state.downloadDocument = {
+        message: action.payload.message ?? strings.SOMETHING_WENT_WRONG,
+        data: action.payload.data ?? ''
+      }
+    },
+    downloadDocumentError : (state, action: PayloadAction<string>) => {
+      state.downloadDocument = {
+       message: action?.payload ?? strings.SOMETHING_WENT_WRONG,
+       data: ''
+      }
+    },
+
+    //Download document
+    downloadVoucherAction : (state) => {
+      state.downloadVoucher = {}
+    },
+    downloadVoucherSuccess: (state, action: PayloadAction<GenericResponse>) => {
+      state.downloadVoucher = {
+        message: action.payload.message ?? strings.SOMETHING_WENT_WRONG,
+        data: action.payload.data ?? ''
+      }
+    },
+    downloadVoucherError : (state, action: PayloadAction<string>) => {
+      state.downloadVoucher = {
+       message: action?.payload ?? strings.SOMETHING_WENT_WRONG,
+       data: ''
+      }
+    },
+
+    editGstAction : (state) =>{
+        state.apiError = false
+        state.apiMessage = ''
+    },
+    editGstAuthorisationAction : (state) =>{
+        state.apiError = false
+        state.apiMessage = ''
+    },
+
+    cancelModificationRequestAction : (state) =>{
+        state.apiError = false
+        state.apiMessage = ''
+    },
 
     // View Details
     getViewDetails: (state) => {
@@ -177,10 +250,10 @@ const flightForm = createSlice({
     },
     viewDetailsSuccess: (state, action: PayloadAction<ApiData>) => {
       const viewData = action.payload ?? {};
-      const { 
-        corporateDetails = {}, 
-        relationshipManager = {}, 
-        flightDetails = {} , 
+      const {
+        corporateDetails = {},
+        relationshipManager = {},
+        flightDetails = {},
         bookingDetails = {}
       } = viewData;
 
@@ -206,6 +279,14 @@ const flightForm = createSlice({
     viewDetailsFailure: (state, action: PayloadAction<string>) => {
       state.screenLoading = false;
       state.screenError = true;
+    },
+    postSuccess : (state,action : PayloadAction<GenericResponse>) => {
+      state.apiError = false
+      state.apiMessage = action?.payload?.message
+    },
+    postError : (state,action : PayloadAction<string>) => {
+      state.apiError = false
+      state.apiMessage = action.payload
     }
   }
 });
@@ -235,7 +316,21 @@ export const {
   subtripError,
   getCityAutosuggest,
   cityAutosuggestSuccess,
-  cityAutosuggestError
+  cityAutosuggestError,
+  getCorporateUsers,
+  corporateUsersSuccess,
+  corporateUsersError,
+  downloadDocumentAction,
+  downloadDocumentSuccess,
+  downloadDocumentError,
+  downloadVoucherAction,
+  downloadVoucherSuccess,
+  downloadVoucherError,
+  editGstAction,
+  editGstAuthorisationAction,
+  cancelModificationRequestAction,
+  postSuccess,
+  postError
 } = flightForm.actions;
 
 export default flightForm.reducer;
