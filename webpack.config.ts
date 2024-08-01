@@ -83,6 +83,12 @@ module.exports = {
   },
 
   plugins: [
+    new webpack.DefinePlugin({
+      "process.env": {
+        NODE_ENV: JSON.stringify("development"),
+        BASE_URL: JSON.stringify("/admin/flightcrs"),
+      }
+    }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
     new HtmlWebpackPlugin({

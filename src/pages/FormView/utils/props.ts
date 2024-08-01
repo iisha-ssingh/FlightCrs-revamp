@@ -236,9 +236,7 @@ interface KeyValue {
   
   interface ErrorResponse {
     response?: {
-      data?: {
         message?: string;
-      };
     };
   }
 

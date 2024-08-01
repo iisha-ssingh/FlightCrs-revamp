@@ -1,4 +1,4 @@
-import Constants from '../utils/stringLiterals';
+import Constants from '../utils/StringLiterals';
 import CustomError from './CustomError';
 
 // Retry button needs to be displayed

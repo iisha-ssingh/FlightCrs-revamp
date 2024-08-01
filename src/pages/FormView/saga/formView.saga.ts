@@ -73,7 +73,7 @@ function* fetchPrefetchSaga() {
     yield put(prefetchSuccess(content));
   } catch (error) {
     const errorResponse = (error as ErrorResponse).response ?? {};
-    const errorMessage = errorResponse?.data?.message ?? "An error occurred";
+    const errorMessage = errorResponse?.message ?? "An error occurred";
     yield put(prefetchError(errorMessage));
   }
 }
@@ -86,7 +86,7 @@ function* fetchConvenienceFee() {
     yield put(convenienceFeeSuccess(content));
   } catch (error) {
     const errorResponse = (error as ErrorResponse).response ?? {};
-    const errorMessage = errorResponse?.data?.message ?? "An error occurred";
+    const errorMessage = errorResponse?.message ?? "An error occurred";
     yield put(convenienceFeeError(errorMessage));
   }
 }
@@ -99,7 +99,7 @@ function* fetchCustomConfig() {
     yield put(customConfigSuccess(content));
   } catch (error) {
     const errorResponse = (error as ErrorResponse).response ?? {};
-    const errorMessage = errorResponse?.data?.message ?? "An error occurred";
+    const errorMessage = errorResponse?.message ?? "An error occurred";
     yield put(customConfigError(errorMessage));
   }
 }
@@ -112,7 +112,7 @@ function* fetchManagerList() {
     yield put(managerListSuccess(content));
   } catch (error) {
     const errorResponse = (error as ErrorResponse).response ?? {};
-    const errorMessage = errorResponse?.data?.message ?? "An error occurred";
+    const errorMessage = errorResponse?.message ?? "An error occurred";
     yield put(managerListError(errorMessage));
   }
 }
@@ -125,7 +125,7 @@ function* fetchGSTList() {
     yield put(gstInSuccess(content));
   } catch (error) {
     const errorResponse = (error as ErrorResponse).response ?? {};
-    const errorMessage = errorResponse?.data?.message ?? "An error occurred";
+    const errorMessage = errorResponse?.message ?? "An error occurred";
     yield put(gstInError(errorMessage));
   }
 }
@@ -145,7 +145,7 @@ function* fetchSubtripDetails() {
     yield put(subtripSuccess(content));
   } catch (error) {
     const errorResponse = (error as ErrorResponse).response ?? {};
-    const errorMessage = errorResponse?.data?.message ?? "An error occurred";
+    const errorMessage = errorResponse?.message ?? "An error occurred";
     yield put(subtripError(errorMessage));
   }
 }
@@ -157,7 +157,7 @@ function* fetchCities(action: PayloadAction<CityAutoSuggestPayload>) {
     yield put(cityAutosuggestSuccess(content));
   } catch (error) {
     const errorResponse = (error as ErrorResponse).response ?? {};
-    const errorMessage = errorResponse?.data?.message ?? "An error occurred";
+    const errorMessage = errorResponse?.message ?? "An error occurred";
     yield put(cityAutosuggestError(errorMessage));
   }
 }
@@ -165,11 +165,11 @@ function* fetchCities(action: PayloadAction<CityAutoSuggestPayload>) {
 function* fetchCorporateUsers(action: PayloadAction<CorporateUserAutosuggest>) {
   try {
     const response: ApiResponse = yield call(Api.corporateUserSearch, action.payload);
-    const content = (response?.data?.data ?? []) as CorporateUser[] | [];
+    const content = (response?.data ?? []) as CorporateUser[] | [];
     yield put(corporateUsersSuccess(content));
   } catch (error) {
     const errorResponse = (error as ErrorResponse).response ?? {};
-    const errorMessage = errorResponse?.data?.message ?? "An error occurred";
+    const errorMessage = errorResponse?.message ?? "An error occurred";
     yield put(corporateUsersError(errorMessage));
   }
 }
@@ -187,7 +187,7 @@ function* downloadDocument(action: PayloadAction<DownloadDocumentRequest>) {
     yield put(downloadDocumentSuccess(content));
   } catch (error) {
     const errorResponse = (error as ErrorResponse).response ?? {};
-    const errorMessage = errorResponse?.data?.message ?? "An error occurred";
+    const errorMessage = errorResponse?.message ?? "An error occurred";
     yield put(downloadDocumentError(errorMessage));
   }
 }
@@ -206,7 +206,7 @@ function* downloadVoucher(action: PayloadAction<DownloadVoucherRequest>) {
     yield put(downloadVoucherSuccess(content));
   } catch (error) {
     const errorResponse = (error as ErrorResponse).response ?? {};
-    const errorMessage = errorResponse?.data?.message ?? "An error occurred";
+    const errorMessage = errorResponse?.message ?? "An error occurred";
     yield put(downloadVoucherError(errorMessage));
   }
 }
@@ -228,11 +228,11 @@ function* editGst() {
 
   try {
     const response: ApiResponse = yield call(Api.editGst, payload);
-    const content = (response?.data ?? []) as GenericResponse ;
+    const content = (response ?? []) as GenericResponse ;
     yield put(postSuccess(content));
   } catch (error) {
     const errorResponse = (error as ErrorResponse).response ?? {};
-    const errorMessage = errorResponse?.data?.message ?? "An error occurred";
+    const errorMessage = errorResponse?.message ?? "An error occurred";
     yield put(postError(errorMessage));
   }
 }
@@ -242,21 +242,20 @@ function* editGstAuthorisation() {
     const response: ApiResponse = yield call(Api.editGstAuthorisation);
   } catch (error) {
     const errorResponse = (error as ErrorResponse).response ?? {};
-    const errorMessage = errorResponse?.data?.message ?? "An error occurred";
+    const errorMessage = errorResponse?.message ?? "An error occurred";
     yield put(postError(errorMessage));
   }
 }
 
 function* cancelModificationRequest() {
   const bookingId: string = yield select(bookingIdSelector);
-
   try {
     const response: ApiResponse = yield call(Api.cancelModificationRequest, {bookingId: bookingId ?? ''});
     const content = (response?.data ?? []) as GenericResponse ;
     yield put(postSuccess(content));
   } catch (error) {
     const errorResponse = (error as ErrorResponse).response ?? {};
-    const errorMessage = errorResponse?.data?.message ?? "An error occurred";
+    const errorMessage = errorResponse?.message ?? "An error occurred";
     yield put(postError(errorMessage));
   }
 }
@@ -273,7 +272,7 @@ function* fetchViewDetails() {
     yield put(viewDetailsSuccess(content));
   } catch (error) {
     const errorResponse = (error as ErrorResponse).response ?? {};
-    const errorMessage = errorResponse?.data?.message ?? "An error occurred";
+    const errorMessage = errorResponse?.message ?? "An error occurred";
     yield put(viewDetailsFailure(errorMessage));
   }
 }

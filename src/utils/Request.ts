@@ -49,6 +49,7 @@ class Request {
         if (status === httpStatusCodes.UNAUTHORIZED) {
           const currentURL = window.location.href;
           const { host } = window.location;
+          console.log(process)
           if (process.env.NODE_ENV === 'development') {
             window.location.href = `http://localhost:5200/admin/marvel/login/user?redirect=${currentURL}`;
           } else {

@@ -4,9 +4,10 @@ import ClientError from './errors/ClientError';
 import UnauthorizedAccessError from './errors/UnauthorizedAccessError';
 import {logError} from './loggingService';
 import ForbiddenError from './errors/ForbiddenError';
-import Constants from './utils/stringLiterals';
+import Constants from './utils/StringLiterals';
 import type {JsonObjectType} from './utils';
-import {ApiResponse} from "../pages/FormView/utils/props.ts";
+import { isEmpty } from '../utils/common';
+// import {ApiResponse} from "../pages/FormView/utils/props.ts";
 
 const STRINGS = Constants.NETWORK_LAYER;
 
@@ -24,9 +25,10 @@ type Data = JsonObjectType | FormData;
 type CustomOptions = RequestInit & {
     logErrorToRemote?: boolean;
     timeout?: number;
+    headers?: object;
 };
 
-type ApiParamsWithData = {
+export type ApiParamsWithData = {
     service: string;
     data: Data;
     options?: CustomOptions;
@@ -46,7 +48,7 @@ type FetchDataParams = {
     options?: CustomOptions;
 };
 
-interface ApiResponse<T = any> {
+export interface ApiResponse<T = any> {
     message: string;
     data: T;
     status: number;
@@ -59,8 +61,7 @@ const NetworkLayer = (() => {
     let appApiHeaders: () => RequestInit['headers'];
 
     const generateUrl = (service: string, prefixHost = true) => {
-        // TODO: Discussion required
-        return prefixHost ? `https://www.fabmailers.in/${service}` : service;
+        return prefixHost ? `${process.env.BASE_URL}${service}` : service;
     };
 
     const generateHeaders = (extraHeaders?: RequestInit['headers']) => {
@@ -88,25 +89,35 @@ const NetworkLayer = (() => {
     // });
 
     const fetchData = async ({method, url, data, options}: FetchDataParams) => {
-        let response: ApiResponse;
+        let response: ApiResponse = {
+            message: '',
+            data: undefined,
+            status: 0
+        };
         // Making logErrorToRemote false by default due to JSON.stringify in logError causing issues
         const logErrorToRemote = options?.logErrorToRemote ?? false;
         try {
-            if (!isNetworkConnected) {
-                throw new ServerError(STRINGS.NO_INTERNET_SUBHEADING, {
-                    title: STRINGS.NO_INTERNET_HEADING,
-                });
-            }
+            // if (!isNetworkConnected) {
+            //     throw new ServerError(STRINGS.NO_INTERNET_SUBHEADING, {
+            //         title: STRINGS.NO_INTERNET_HEADING,
+            //     });
+            // }
+          
             const headers = generateHeaders(options?.headers);
+            let requestUrl = url;
+            if (method === 'GET' && !isEmpty(data)) {
+                const queryParams = new URLSearchParams(data as Record<string, string>).toString();
+                requestUrl = `${url}?${queryParams}`;
+            }
             const body = headers['Content-Type'] === 'multipart/form-data;'
                 ? (data as FormData)
                 : JSON.stringify(data);
 
-            const apiResponse = await fetch(url, {
+            const apiResponse = await fetch(requestUrl, {
                 ...(options ?? {}),
                 method,
                 headers,
-                body,
+                body: method !== 'GET' ? body : undefined,
             });
 
             responseHandlerCallback?.(apiResponse);
@@ -140,11 +151,11 @@ const NetworkLayer = (() => {
         logErrorToRemote: boolean;
         data: JsonObjectType | FormData | undefined;
         url: string
-    }, response: ApiResponse) => {
+    }, response: ApiResponse | undefined) => {
         if (extraInfo.logErrorToRemote) {
             const err = `API Failure ${JSON.stringify({
                 // TODO: Figure out JS version
-                // jsVersion: AppInfoLayer.getJsVersion(),
+                // jsVersion: ,
                 url: extraInfo.url,
                 request: extraInfo.data,
                 response,
@@ -173,11 +184,12 @@ const NetworkLayer = (() => {
         // init: () => {
         //   console.info('Network layer initialized');
         // },
-        get: async ({service, options, prefixHost}: ApiParamsWithoutData) => {
+        get: async ({service, data, options, prefixHost}: ApiParamsWithData) => {
             return await fetchData({
                 method: RequestType.GET,
                 url: generateUrl(service, prefixHost),
-                options: options,
+                data,
+                options,
             });
         },
         post: async ({service, data, options, prefixHost}: ApiParamsWithData) => {
