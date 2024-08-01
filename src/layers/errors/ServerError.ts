@@ -1,0 +1,13 @@
+import Constants from '../utils/stringLiterals';
+import CustomError from './CustomError';
+
+// Retry button needs to be displayed
+export default class ServerError extends CustomError {
+  constructor(
+    message = Constants.NETWORK_LAYER.PLEASE_TRY_AGAIN,
+    extraData?: any,
+    status?: number
+  ) {
+    super(message, extraData, status);
+  }
+}
