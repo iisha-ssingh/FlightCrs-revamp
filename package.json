@@ -17,7 +17,7 @@
     "@babel/plugin-syntax-dynamic-import": "7.8.3",
     "@babel/plugin-transform-runtime": "7.24.7",
     "@babel/preset-typescript": "7.24.7",
-    "@reduxjs/toolkit": "2.2.6",
+    "@reduxjs/toolkit": "2.2.7",
     "axios": "1.7.2",
     "react": "18.3.1",
     "react-dom": "18.3.1",
