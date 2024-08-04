@@ -6,7 +6,8 @@ import {logError} from './loggingService';
 import ForbiddenError from './errors/ForbiddenError';
 import Constants from './utils/StringLiterals';
 import type {JsonObjectType} from './utils';
-import { isEmpty } from '../utils/common';
+import {isEmpty} from '../utils/common';
+import NoInternetError from "./errors/NoInternetError.ts";
 // import {ApiResponse} from "../pages/FormView/utils/props.ts";
 
 const STRINGS = Constants.NETWORK_LAYER;
@@ -61,7 +62,9 @@ const NetworkLayer = (() => {
     let appApiHeaders: () => RequestInit['headers'];
 
     const generateUrl = (service: string, prefixHost = true) => {
-        return prefixHost ? `${process.env.BASE_URL}${service}` : service;
+        // return prefixHost ? `${process.env.BASE_URL}${service}` : service;
+        // FIXME:
+        return prefixHost ? `https://crs.fabhotels.com/${service}` : service;
     };
 
     const generateHeaders = (extraHeaders?: RequestInit['headers']) => {
@@ -95,14 +98,17 @@ const NetworkLayer = (() => {
             status: 0
         };
         // Making logErrorToRemote false by default due to JSON.stringify in logError causing issues
-        const logErrorToRemote = options?.logErrorToRemote ?? false;
+        let logErrorToRemote = options?.logErrorToRemote ?? false;
         try {
+            // FIXME
             // if (!isNetworkConnected) {
-            //     throw new ServerError(STRINGS.NO_INTERNET_SUBHEADING, {
-            //         title: STRINGS.NO_INTERNET_HEADING,
-            //     });
-            // }
-          
+            if (false) {
+                logErrorToRemote = false;
+                throw new NoInternetError(STRINGS.NO_INTERNET_SUBHEADING, {
+                    title: STRINGS.NO_INTERNET_HEADING,
+                });
+            }
+
             const headers = generateHeaders(options?.headers);
             let requestUrl = url;
             if (method === 'GET' && !isEmpty(data)) {
