@@ -162,6 +162,7 @@ export const populatePrefetch = (payload: Record<string, any>): typeof INITIAL_P
           //   return { code: item.code, name: item.name };
           // } else if (key === 'isdCodes') {
           //   return { code: item.code, country: item.country };
+          return item;
         });
       }
     }

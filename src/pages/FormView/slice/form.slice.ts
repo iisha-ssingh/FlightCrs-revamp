@@ -29,9 +29,23 @@ import {
   CustomConfig, 
   CityAutoSuggestPayload, 
   GstinList,
-  CitySuggestionResponse
+  CitySuggestionResponse,
+  SearchCompanyPayload,
+  DependentFields,
+  FormStateViaKey
 } from '../utils/props';
 
+const initialDependentFields: DependentFields = {
+  tripCustomFieldConfigs: [],
+  userCustomFieldConfigs: [],
+  gstList: [],
+  managerList: [],
+  cancellationConvenienceFeeWithGst: 0,
+  convenienceFeeWithGst: 0,
+  errorEncountered: false,
+  errorMessage: '',
+  isReset: false,
+};
 
 const initialState: FormView = {
   screenLoading: false,
@@ -55,7 +69,32 @@ const initialState: FormView = {
   baggageDetails : JSON.parse(JSON.stringify({ ...BAGGAGE_DETAILS })),
   guestDetails : JSON.parse(JSON.stringify({ ...PASSENGER_DETAILS })),
   paymentMode : JSON.parse(JSON.stringify({ ...PAYMENT_DETAILS })),
-  priceBreakup : JSON.parse(JSON.stringify({ ...PRICE_BREAKUP}))
+  priceBreakup : JSON.parse(JSON.stringify({ ...PRICE_BREAKUP})),
+  dependentFields: initialDependentFields,
+};
+
+export const formatGst = (gstOptionList: any[] = []): any[] => {
+  if (!Array.isArray(gstOptionList)) {
+    return [];
+  }
+  return gstOptionList.map((item) => ({
+    ...item,
+    value: item.gstin,
+    text: item.entityName ?? '',//TODO: TO BE CHECKED WHAT TO PUT THE DEFAULT VALUE IN TEXT IF ENTITY NAME IS NULL
+  }));
+};
+
+export const formatManager = (corporateManagersData: any[] = []): any[] => {
+  if (!Array.isArray(corporateManagersData)) {
+    return [];
+  }
+  return corporateManagersData.map((item) => ({
+    key: item.userId,
+    id: item.userId,
+    text: `${item.firstName} ${item.lastName}`,
+    name: `${item.firstName} ${item.lastName}`,
+    ...item,
+  }));
 };
 
 const flightForm = createSlice({
@@ -63,11 +102,31 @@ const flightForm = createSlice({
   initialState,
   reducers: {
     // Form State update
-    updateFormState: (state, action: PayloadAction<FormState>) => {
-      const { component, field, value } = action.payload;
+    // updateFormState: (state, action: PayloadAction<FormState>) => {
+    //   const { component,  value = {} } = action.payload;
+    //   if (component in state && typeof state[component] === 'object') {
+    //     const formState = (state[component] as Record<string, unknown>)[field] as { value : object };
+    //     formState.value = value;
+    //   }
+   
+    // },
+    updateFormState: (state, action: PayloadAction<{
+      component: keyof typeof state,
+      updates: Record<string, any>
+    }>) => {
+      const { component, updates } = action.payload;
       if (component in state && typeof state[component] === 'object') {
-        const formState = (state[component] as Record<string, unknown>)[field] as { value: object };
-        formState.value = value;
+        (state[component] as Record<string, any>) = {
+          ...(state[component] as Record<string, any>),
+          ...updates
+        };
+      }
+    },
+    updateViaKeyFormState: (state, action: PayloadAction<FormStateViaKey>) => {
+      const { component, field, key, value } = action.payload;
+      if (component in state && typeof state[component] === 'object') {
+        const formState = (state[component] as Record<string, unknown>)[field] as Record<string, unknown>;
+        formState[key] = value;
       }
     },
 
@@ -95,7 +154,7 @@ const flightForm = createSlice({
     },  
 
     //Company name
-    getCompanyName : (state) => {
+    getCompanyName : (state,action : PayloadAction<SearchCompanyPayload | object>) => {
       state.companyName = []
     },
     companyNameSuccess : (state, action: PayloadAction<Company[]>) => {
@@ -206,7 +265,67 @@ const flightForm = createSlice({
     viewDetailsFailure: (state, action: PayloadAction<string>) => {
       state.screenLoading = false;
       state.screenError = true;
-    }
+    },
+
+    //= ================Dependent field===============
+    getDependentField: (state) => {
+      state.dependentFields.tripCustomFieldConfigs = [];
+      state.dependentFields.userCustomFieldConfigs = [];
+      state.dependentFields.gstList = [];
+      state.dependentFields.managerList = [];
+      state.dependentFields.cancellationConvenienceFeeWithGst = 0;
+      state.dependentFields.convenienceFeeWithGst = 0;
+      state.dependentFields.errorEncountered = false;
+      state.dependentFields.isReset = false;
+    },
+    dependentFieldsSuccess: (state, action) => {
+      const [gstList = {}, managerList = {}, configList = {}, conveFee = {}] = action.payload ?? []
+      const gstDisplayList = gstList.data.data ?? [];
+      const managerDisplayList = managerList.data.data ?? [];
+      const { tripCustomFieldConfigs = [], userCustomFieldConfigs = []} = configList.data.data ?? {};
+      const { convenienceFeeWithGst = 0, cancellationConvenienceFeeWithGst = 0 } = conveFee.data.data ?? {};
+      // pathOr([], 'payload', action);
+      // const gstDisplayList = pathOr([], 'data.data', gstList);
+      // const managerDisplayList = pathOr([], 'data.data', managerList);
+      // const { tripCustomFieldConfigs, userCustomFieldConfigs } = pathOr(
+      //   {},
+      //   'data.data',
+      //   configList
+      // );
+      // const { convenienceFeeWithGst, cancellationConvenienceFeeWithGst } =
+      //   pathOr({}, 'data.data', conveFee);
+      state.dependentFields.tripCustomFieldConfigs = tripCustomFieldConfigs;
+      state.dependentFields.userCustomFieldConfigs = userCustomFieldConfigs;
+      state.dependentFields.gstList = formatGst(gstDisplayList);
+      state.dependentFields.managerList = formatManager(managerDisplayList);
+      state.dependentFields.cancellationConvenienceFeeWithGst =
+        cancellationConvenienceFeeWithGst;
+      state.dependentFields.convenienceFeeWithGst = convenienceFeeWithGst;
+      state.dependentFields.errorEncountered = false;
+    },
+    dependentFieldsFailure: (state, action) => {
+      // const error = pathOr('', 'payload', action);
+      const error = action.payload ?? '';
+      state.dependentFields.tripCustomFieldConfigs = [];
+      state.dependentFields.userCustomFieldConfigs = [];
+      state.dependentFields.gstList = [];
+      state.dependentFields.managerList = [];
+      state.dependentFields.cancellationConvenienceFeeWithGst = 0;
+      state.dependentFields.convenienceFeeWithGst = 0;
+      state.dependentFields.errorEncountered = true;
+      state.dependentFields.errorMessage = error;
+    },
+    dependentFieldsReset: (state) => {
+      state.dependentFields.errorEncountered = false;
+      state.dependentFields.errorMessage = '';
+      state.dependentFields.isReset = true;
+      state.dependentFields.tripCustomFieldConfigs = [];
+      state.dependentFields.userCustomFieldConfigs = [];
+      state.dependentFields.gstList = [];
+      state.dependentFields.managerList = [];
+      state.dependentFields.cancellationConvenienceFeeWithGst = 0;
+      state.dependentFields.convenienceFeeWithGst = 0;
+    },
   }
 });
 
@@ -235,7 +354,15 @@ export const {
   subtripError,
   getCityAutosuggest,
   cityAutosuggestSuccess,
-  cityAutosuggestError
+  cityAutosuggestError,
+  getCompanyName,
+  companyNameSuccess,
+  companyNameError,
+  getDependentField,
+  dependentFieldsSuccess,
+  dependentFieldsFailure,
+  dependentFieldsReset,
+  updateViaKeyFormState,
 } = flightForm.actions;
 
 export default flightForm.reducer;

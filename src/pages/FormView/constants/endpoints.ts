@@ -8,4 +8,5 @@ export const URL = {
     gstinList : '/flightaggregation/v1/corporate/gstins',
     subtripDetails: '/flightaggregation/v1/autosuggestion/flightSubTrip/details',
     cityAutosuggest: '/flightaggregation/v1/autosuggestion/flight/search',
+    companyName: "/flightaggregation/v1/corporate/search"
   }

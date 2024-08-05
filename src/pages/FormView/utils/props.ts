@@ -1,5 +1,6 @@
+// TODO: CHANGED THE TYPE OF VALUE IN KEYVALUE INTERFACE TO ANY FROM STRING BECAUSE IT COULD BE AN OBJECT ALSO
 interface KeyValue {
-    value: string;
+    value: any;
     [key: string]: unknown;
   }
   
@@ -175,9 +176,21 @@ interface KeyValue {
     gstInList : GstinList[] | Array<Object>;
     subtripDetails : Array<Object>; //TODO: Add type
     cityAutosuggestList : CitySuggestion[] | Array<Object>; 
+    dependentFields: DependentFields;
   }
-
-
+  
+  // TODO: NEED TO ADD THE TYPE FOR GSTLIST, MANAGERLIST, tripCustomFieldConfigs, userCustomFieldConfigs
+  interface DependentFields {
+    tripCustomFieldConfigs: any[];
+    userCustomFieldConfigs: any[];
+    gstList: any[];
+    managerList: any[];
+    cancellationConvenienceFeeWithGst: number;
+    convenienceFeeWithGst: number;
+    errorEncountered: boolean;
+    errorMessage: string;
+    isReset: boolean;
+  }
   interface ViewDetailsRequest {
     companyId: string;
     bookingId: string;
@@ -189,6 +202,10 @@ interface KeyValue {
 
   type CityAutoSuggestPayload = {
     query: string | null
+  }
+
+  type SearchCompanyPayload = {
+    companyName: string | null
   }
   
   interface ApiResponse {
@@ -222,6 +239,13 @@ interface KeyValue {
     component: keyof FormView, 
     field: string; 
     value: any 
+  }
+
+  interface FormStateViaKey {
+    component: keyof FormView;
+    field: string;
+    key: string;
+    value: any;
   }
 
   interface CustomConfig {
@@ -302,5 +326,9 @@ interface MasterTripIdState {
     MasterTripIdState,
     CityAutoSuggestPayload,
     GstinList,
-    CitySuggestionResponse
+    CitySuggestionResponse,
+    SearchCompanyPayload,
+    DependentFields,
+    FormStateViaKey,
+    PrefetchData,
   }

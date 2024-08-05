@@ -44,6 +44,29 @@ module.exports = {
           },
         ],
       },
+      // TODO: TO BE REMOVED
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
+        exclude: /\.module\.css$/,
+      },
+      // TODO: TO BE REMOVED
+      {
+        test: /\.css$/,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules: {
+                localIdentName: '[name]__[local]___[hash:base64:5]',
+              },
+              importLoaders: 1,
+            },
+          },
+        ],
+        include: /\.module\.css$/,
+      },
     ]
   },
   optimization: {
@@ -73,6 +96,18 @@ module.exports = {
     host: HOST,
     allowedHosts: ['flightcrs.fabhotels.com'],
     proxy: [
+        {
+            context: ["/admin/flightcrs/fabuser/**"],
+            target: "https://uat.fabmailers.in/",
+            secure: false,
+            changeOrigin: true
+          },
+          {
+            context: ["/admin/flightcrs/fabcrs/**"],
+            target: "https://uat.fabmailers.in/",
+            secure: false,
+            changeOrigin: true
+          },
           {
             context: ["/admin/flightcrs/flightaggregation/**"],
             target: "https://uat.fabmailers.in/",

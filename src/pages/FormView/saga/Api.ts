@@ -6,7 +6,8 @@ import {
   ApiData, 
   ViewDetailsParams, 
   SubtripPayload, 
-  CityAutoSuggestPayload 
+  CityAutoSuggestPayload,
+  SearchCompanyPayload,
 } from '../utils/props';
 
 const Api = {
@@ -22,7 +23,7 @@ const Api = {
     const api = new Request(false);
     return api.get(URL.convenienceFee, params, URL.convenienceFee);
   },
-    search :  (params: ApiData): Promise<ApiResponse> => {
+  search :  (params: ApiData): Promise<ApiResponse> => {
     const api = new Request(false);
     return api.post(URL.search, params, URL.search);
   },
@@ -45,6 +46,11 @@ const Api = {
   cityAutosuggest : (params: CityAutoSuggestPayload): Promise<ApiResponse> => {
     const api = new Request(false);
     return api.get(URL.cityAutosuggest, params, URL.cityAutosuggest);
+  },
+  // TODO: CORRECT THE TYPE OF THE PARAMS HERE
+  getCorporateList : (params:SearchCompanyPayload): Promise<ApiResponse> => {
+    const api = new Request(false);
+    return api.get(URL.companyName, params, URL.companyName);
   }
 }
 
