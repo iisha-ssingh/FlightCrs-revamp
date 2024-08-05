@@ -1,4 +1,4 @@
-import Request from '../../../utils/Request';
+import Request from '../../../utils/request';
 import { URL } from '../constants/endpoints';
 import { 
   ApiResponse, 

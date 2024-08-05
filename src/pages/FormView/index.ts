@@ -1,1 +1,1 @@
-export {default} from './FormView'
+export {default} from './formView'

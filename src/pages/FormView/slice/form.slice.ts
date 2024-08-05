@@ -73,6 +73,7 @@ const initialState: FormView = {
   dependentFields: initialDependentFields,
 };
 
+// TODO : PUT THIS FILE INSIDE THE UTILS FOLDER
 export const formatGst = (gstOptionList: any[] = []): any[] => {
   if (!Array.isArray(gstOptionList)) {
     return [];
@@ -83,7 +84,7 @@ export const formatGst = (gstOptionList: any[] = []): any[] => {
     text: item.entityName ?? '',//TODO: TO BE CHECKED WHAT TO PUT THE DEFAULT VALUE IN TEXT IF ENTITY NAME IS NULL
   }));
 };
-
+// TODO: PUT THIS FILE INSIDE THE UTILS FOLDER
 export const formatManager = (corporateManagersData: any[] = []): any[] => {
   if (!Array.isArray(corporateManagersData)) {
     return [];
@@ -102,14 +103,6 @@ const flightForm = createSlice({
   initialState,
   reducers: {
     // Form State update
-    // updateFormState: (state, action: PayloadAction<FormState>) => {
-    //   const { component,  value = {} } = action.payload;
-    //   if (component in state && typeof state[component] === 'object') {
-    //     const formState = (state[component] as Record<string, unknown>)[field] as { value : object };
-    //     formState.value = value;
-    //   }
-   
-    // },
     updateFormState: (state, action: PayloadAction<{
       component: keyof typeof state,
       updates: Record<string, any>
@@ -284,16 +277,6 @@ const flightForm = createSlice({
       const managerDisplayList = managerList.data.data ?? [];
       const { tripCustomFieldConfigs = [], userCustomFieldConfigs = []} = configList.data.data ?? {};
       const { convenienceFeeWithGst = 0, cancellationConvenienceFeeWithGst = 0 } = conveFee.data.data ?? {};
-      // pathOr([], 'payload', action);
-      // const gstDisplayList = pathOr([], 'data.data', gstList);
-      // const managerDisplayList = pathOr([], 'data.data', managerList);
-      // const { tripCustomFieldConfigs, userCustomFieldConfigs } = pathOr(
-      //   {},
-      //   'data.data',
-      //   configList
-      // );
-      // const { convenienceFeeWithGst, cancellationConvenienceFeeWithGst } =
-      //   pathOr({}, 'data.data', conveFee);
       state.dependentFields.tripCustomFieldConfigs = tripCustomFieldConfigs;
       state.dependentFields.userCustomFieldConfigs = userCustomFieldConfigs;
       state.dependentFields.gstList = formatGst(gstDisplayList);

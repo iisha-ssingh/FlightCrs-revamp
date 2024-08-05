@@ -59,6 +59,7 @@ const CorporateDetails: React.FC<CorporateDetailsProps> = ({ field }) => {
 
   const corporateDetails = useSelector((state: RootState) => state.formView.corporateDetails);
   const companyName = useSelector((state: RootState) => state.formView.companyName);
+  // TODO: PUT IT INSIDE THE SELECTOR
   const companyId = corporateDetails?.companyName?.value?.id;
   const dependentFields = useSelector((state: RootState) => state.formView.dependentFields);
 

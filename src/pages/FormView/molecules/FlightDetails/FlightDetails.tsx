@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import { AutoSuggest, InputField, Calendar } from "@fabhotelstech/react-fab-components";
 import { useDispatch, useSelector } from "react-redux";
-import { updateFormState, getCompanyName, getDependentField, updateViaKeyFormState, dependentFieldsReset } from "../../slice/form.slice";
+import { updateViaKeyFormState } from "../../slice/form.slice";
 import { AppDispatch, RootState } from "../../../../redux/store";
-import { Company, FormView, PrefetchData } from '../../utils/props';
+import { FormView, PrefetchData } from '../../utils/props';
 import { Dropdown } from '@fabhotelstech/mui-internal-components'; 
 import './FlightDetails.css';
 
@@ -23,7 +23,7 @@ const componentMapping = {
   autoSuggest: AutoSuggest,
   dropdown: DropDownFunc,
   input: InputField,
-  // timePickerInput: Calendar,
+  timePickerInput: Calendar,
 };
 
 interface FormFieldProps {
@@ -53,9 +53,6 @@ interface FlightDetailsProps {
 }
 
 const FlightDetails: React.FC<FlightDetailsProps> = ({ field }) => {
-
-  console.log("field", field);
-
   const {
     prefetch = {}
   } = useSelector((state: RootState) => state.formView as FormView);
@@ -94,6 +91,12 @@ const FlightDetails: React.FC<FlightDetailsProps> = ({ field }) => {
         key: "options",
         value: terminals,
       }));
+    dispatch(updateViaKeyFormState({
+        component: "flightDetails",
+        field: "airline",
+        key: "options",
+        value: airlines,
+      }));
   },[prefetch])
 
   return (
@@ -107,7 +110,16 @@ const FlightDetails: React.FC<FlightDetailsProps> = ({ field }) => {
             key={key}
             field={fieldData}
             onChange={()=>{}}
-            timeProps={fieldData}
+            options={{
+              static: true,
+              monthSelectorType: "static",
+              showMonths: 1,
+              mode: "single",
+              dateFormat: "D d M'y",
+              minDate: "today",
+              className: "bus-departure-date",
+              disableMobile: "true"
+            }}
           />
         ))}
       </div>

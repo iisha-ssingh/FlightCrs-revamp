@@ -15,119 +15,6 @@ export const JOURNEY_TYPE = {
     errorMessage: "Please select journey type",
 },
 }
-// TO BE REMOVED
-// export const CORPORATE_DETAILS = {
-//   companyName: {
-//     componentType: 'input',
-//     options: [],
-//     // label: 'Search company name',
-//     value: '',
-//     isDisabled: false,
-//     isError: false,
-//     id: 'companyName',
-//     errorMessage: 'Please select company name',
-//     required: true,
-//     selectedItem: { id: '', companyName: '' },
-//     size: "sm",
-//     labelKey: "companyName",
-//     subTextKey: "id",
-//     placeholder: "Search for company name",
-//     label: "Company Name",
-//     className: "input-field",
-//   },
-//   relationshipManagerName: {
-//     options: [],
-//     placeholderText: 'Relationship manager name',
-//     required: true,
-//     isError: false,
-//     errorMessage: 'Please select gender',
-//     id: 'gender',
-//     componentType: 'dropdown',
-//     value: '',
-//     isDisabled: false,
-//     selectKey: "name",
-//     textKey: "text",
-//     className: "dropdown-field",
-//   },
-//   relationshipManagerPhone: {
-//     componentType: 'input',
-//     value: '',
-//     isDisabled: true,
-//     placeholder: 'Relationship manager phone ',
-//     errorMessage: 'Please enter relationship manager phone',
-//     isError: false,
-//     label: "Relationship manager phone",
-//   },
-//   relationshipManagerEmail: {
-//     componentType: 'input',
-//     value: '',
-//     placeholder: 'Relationship manager email',
-//     isError: false,
-//     isDisabled: true,
-//     errorMessage: 'Please enter relationship manager email',
-//     label: "Relationship manager email",
-//   },
-//   // gstEntityName: {
-//   //   componentType: 'dropdown',
-//   //   isDisabled: false,
-//   //   options: [{}],
-//   //   selectedItem: {},
-//   //   dynamicPlaceholder: true,
-//   //   required: true,
-//   //   requiredText: '*',
-//   //   placeholderText: 'GST entity name',
-//   //   isError: false,
-//   //   errorMessage: 'Please enter GST entity name',
-//   // },
-//   gstEntityName: {
-//     options: [],
-//     placeholderText: 'GST entity name',
-//     required: true,
-//     isError: false,
-//     errorMessage: 'Please enter GST entity name',
-//     // id: 'gender',
-//     componentType: 'dropdown',
-//     value: '',
-//     isDisabled: false,
-//   },
-//   gSTNumber: {
-//     componentType: 'input',
-//     value: '',
-//     placeholder: 'GSTIN',
-//     isError: false,
-//     isDisabled: true,
-//     errorMessage: 'Please enter GSTIN',
-//     label: "GSTIN",
-//   },
-//   gSTCompanyName: {
-//     componentType: 'input',
-//     value: '',
-//     placeholder: 'GST company name',
-//     isError: false,
-//     isDisabled: true,
-//     errorMessage: 'Please enter GST company name',
-//     label:"GST company name",
-//   },
-//   gSTCompanyAddress: {
-//     componentType: 'input',
-//     value: '',
-//     placeholder: 'GST address',
-//     isError: false,
-//     isDisabled: true,
-//     errorMessage: 'Please enter GST address',
-//     label: "GST address",
-
-//   },
-//   gSTCompanyPinCode: {
-//     componentType: 'input',
-//     value: '',
-//     placeholder: 'GST pincode',
-//     isError: false,
-//     isDisabled: true,
-//     errorMessage: 'Please enter GST pincode',
-//     label: "GST pincode",
-//   },
-// }
 
 export const CORPORATE_DETAILS = {
   companyName: {
@@ -294,8 +181,8 @@ export const FLIGHT_DETAILS = {
     value:'',
     isDisabled: false,
     id: 'airline',
-    selectKey: "",
-    textKey: "",
+    selectKey: "name",
+    textKey: "code",
   },
   flightNumber: {
     componentType: 'input',
@@ -390,7 +277,6 @@ export const FLIGHT_DETAILS = {
 }
 }
 
-
 export const TRIP_MAPPING_INTL= {
     tripId: {
       id: 'tripId',
@@ -420,7 +306,7 @@ export const TRIP_MAPPING_INTL= {
       selectKey: "value",
       textKey: "text",
     },
-  }
+}
 
 export const BOOKING_DETAILS = {
   origin: {
@@ -594,137 +480,6 @@ arrivalDate: {
     flightIntl: true,
 },
 }
-
-// TO BE REMOVED
-// export const FLIGHT_DETAILS = {
-//       subTripId: {
-//         key: "subTripID",
-//         componentType: "dropdown",
-//         options: [{}],
-//         selectedItem: {},
-//         hideValue: true,
-//         dynamicPlaceholder: true,
-//         required: false,
-//         requiredText: "*",
-//         placeholderText: "Select sub-trip ID",
-//         isError: false,
-//         errorMessage: "Please enter sub-trip ID",
-//         disabled: true,
-//         id: 'subTripId',
-//         selectKey: "value",
-//         textKey: "text",
-        
-//       },
-//       ticketingSource: {
-//         componentType: 'dropdown',
-//         options: [],
-//         selectedItem: {},
-//         hideValue: true,
-//         dynamicPlaceholder: true,
-//         required: true,
-//         requiredText: '*',
-//         placeholderText: "Ticketing sources",
-//         isError: false,
-//         errorMessage: "Please select ticketing sources",
-//       },
-//       airline: {
-//         componentType: 'dropdown',
-//         options: [],
-//         selectedItem: {},
-//         hideValue: true,
-//         dynamicPlaceholder: true,
-//         required: true,
-//         requiredText: '*',
-//         placeholderText: "Airline",
-//         isError: false,
-//         errorMessage: "Please select airline",
-//       },
-//       flightNumber: {
-//         componentType: 'input',
-//         value: '',
-//         placeholder: 'Flight number',
-//         required: true,
-//         dynamicPlaceholder: true,
-//         requiredText: '*',
-//         errorMessage: "Please enter flight number",
-//         isError: false,
-//       },
-//       class: {
-//         componentType: 'dropdown',
-//         options: [],
-//         selectedItem: {},
-//         hideValue: true,
-//         dynamicPlaceholder: true,
-//         required: true,
-//         requiredText: '*',
-//         placeholderText: "Class",
-//         isError: false,
-//         errorMessage: "Please select class",
-//       },
-//       pnr: {
-//         componentType: 'input',
-//         value: '',
-//         placeholder: 'PNR number',
-//         required: true,
-//         dynamicPlaceholder: true,
-//         requiredText: '*',
-//         errorMessage: "Please enter PNR number",
-//         isError: false,
-//       },
-//       depDateTime: {
-//         componentType: 'timePickerInput',
-//         value: "",
-//         isError: false,
-//         errorMessage: "Please select valid departure time ",
-//         showTimeSelect: true,
-//         timeIntervals: 5,
-//         dynamicPlaceholder: true,
-//         placeholder: "Departure time",
-//         mainClassName: "react-time-picker-wrapper input-field",
-//         className: " time-picker input-field",
-//         requiredText: '*',
-//         required: true,
-//       },
-//       arrDateTime: {
-//         componentType: 'timePickerInput',
-//         value: "",
-//         isError: false,
-//         errorMessage: "Please select valid arrival time ",
-//         showTimeSelect: true,
-//         dynamicPlaceholder: true,
-//         timeIntervals: 5,
-//         placeholder: "Arrival time",
-//         mainClassName: "react-time-picker-wrapper input-field",
-//         className: " time-picker input-field",
-//         requiredText: '*',
-//         required: true,
-//       },
-//       depTerminal: {
-//         componentType: 'dropdown',
-//         options: [],
-//         selectedItem: {},
-//         hideValue: true,
-//         dynamicPlaceholder: true,
-//         required: true,
-//         requiredText: '*',
-//         placeholderText: "Departure terminal",
-//         isError: false,
-//         errorMessage: "Please select departure terminal",
-//       },
-//       arrTerminal: {
-//         componentType: 'dropdown',
-//         options: [],
-//         selectedItem: {},
-//         hideValue: true,
-//         dynamicPlaceholder: true,
-//         required: true,
-//         requiredText: '*',
-//         placeholderText: "Arrival terminal",
-//         isError: false,
-//         errorMessage: "Please select arrival terminal",
-      
-//   }
-// }
 
 export const FLIGHT_DETAILS_INTL = {
   airline: {
@@ -1038,6 +793,7 @@ transactionId: {
     errorMessage: "Please enter Merchant transaction id",
 },
 }
+
 export const PRICE_BREAKUP = {
   base: {
     componentType: 'priceBreakup',
@@ -1257,7 +1013,6 @@ cancellationRefund: {
     disabled:true,
 },
 }
-
 
 export const INITIAL_PREFETCH = {
   airlines:[],

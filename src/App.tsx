@@ -100,7 +100,7 @@
 
 
 import React from 'react';
-import CreateFlightBookings from './pages/FormView';
+import CreateFlightBookings from './pages/formView';
 
 const App: React.FC = () => {
   return (

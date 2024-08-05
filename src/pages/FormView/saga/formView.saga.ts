@@ -1,4 +1,4 @@
-import {Api} from './Api';
+import {Api} from './api';
 import { call, put, select, takeLatest, debounce, all } from 'redux-saga/effects';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { 
@@ -185,7 +185,7 @@ function* fetchCompanyDetails(action:PayloadAction<SearchCompanyPayload>) {
 }
 
 // added for calling the gstList, relationshipManager, customFieldConfig and convFeeConfig
-// function* corporateResCall(request) {
+// function* updateDependentFields(request) {
 //   try {
 //     const response = yield all([
 //       call(Api.getGstinList, request),
@@ -200,7 +200,7 @@ function* fetchCompanyDetails(action:PayloadAction<SearchCompanyPayload>) {
 //   }
 // }
 
-function* corporateResCall(action: PayloadAction<{ companyId: string }>) {
+function* updateDependentFields(action: PayloadAction<{ companyId: string }>) {
   const { companyId } = action.payload;
   try {
     const [gstList, managerList, configList, conveFee] = yield all([
@@ -227,5 +227,5 @@ export default function* FlightBookingCreate() {
   yield takeLatest(getSubtripDetails.type, fetchSubtripDetails);
   yield takeLatest(getCityAutosuggest.type, fetchCities);
   yield debounce(400, getCompanyName.type, fetchCompanyDetails);
-  yield takeLatest(getDependentField.type, corporateResCall);
+  yield takeLatest(getDependentField.type, updateDependentFields);
 }
