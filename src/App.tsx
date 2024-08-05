@@ -98,20 +98,19 @@
 
 // export default App;
 
-
 import React from 'react';
-import {SearchPage} from "./pages/search/main";
-import {LogLevel, setLogLevel, log} from "./layers/loggingService.ts";
+import {SearchPage} from './pages/search/main';
+import {LogLevel, setLogLevel} from './layers/loggingService.ts';
 
 // TODO: some global alert and error screen | something like root HOC
 const App: React.FC = () => {
-    setLogLevel(LogLevel.LOG);
+  setLogLevel(LogLevel.LOG);
   return (
     <div>
       {/*<CreateFlightBookings />*/}
-        <SearchPage/>
+      <SearchPage />
     </div>
   );
-}
+};
 
 export default App;

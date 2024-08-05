@@ -7,14 +7,10 @@ import {store} from './store';
 // import { BASE_URL } from './utils/constants';
 import App from './App';
 
-{/* <RouterProvider
-  router={createBrowserRouter(Routers, { basename: BASE_URL })}
-/> */
-}
 const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
-    <Provider store={store}>
-        <App/>
-    </Provider>
+  <Provider store={store}>
+    <App />
+  </Provider>,
 );
