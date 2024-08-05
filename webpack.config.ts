@@ -8,7 +8,7 @@ const PORT = process.env.PORT || '3000';
 
 module.exports = {
   mode: 'development', // Set mode to development
-  entry: ['index.tsx'],
+  entry: ['./index.js'],
   devtool: 'eval-source-map',
   output: {
     path: path.resolve(__dirname, 'public/build'),
@@ -21,28 +21,22 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: 'babel-loader',
-            options: {
-              presets: ['@babel/preset-react'], // Use the react preset
-            },
+        test: /\.(js|jsx|ts|tsx)$/,
+        exclude: /node_modules\/(?!react-native)/, // Include react-native in the transpilation
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              '@babel/preset-react',
+              '@babel/preset-typescript',
+              '@babel/preset-env',
+            ],
+            plugins: [
+              '@babel/plugin-transform-runtime',
+              'react-native-web', // Add this to handle react-native-web specific transformations
+            ],
           },
-        ],
-      },
-      {
-        test: /\.(ts|tsx)$/,
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: 'babel-loader',
-            options: {
-              presets: ['@babel/preset-react', '@babel/preset-typescript'], // Use the react and typescript presets
-            },
-          },
-        ],
+        },
       },
     ],
   },

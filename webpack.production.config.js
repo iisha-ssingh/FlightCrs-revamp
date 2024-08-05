@@ -1,157 +1,108 @@
-const webpack = require("webpack");
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const webpack = require('webpack');
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
-process.traceDeprecation = true;
 const WebpackGoogleCloudStoragePlugin = require('webpack-google-cloud-storage-plugin');
 
 module.exports = {
-  entry: ["babel-polyfill", "./scr/index.js"],
+  mode: 'production',
+  entry: ['babel-polyfill', './index.js'], // Include polyfills for broader browser support
   output: {
-    path: path.resolve(__dirname, "public/build"),
-    filename: "[name].[hash].min.js",
-    chunkFilename: "[name].[hash].js",
-
-    publicPath: process.env.publicPath
+    path: path.resolve(__dirname, 'public/build'),
+    filename: '[name].[contenthash].min.js', // Use contenthash for long-term caching
+    chunkFilename: '[name].[contenthash].js',
+    publicPath: process.env.publicPath || '/', // Set dynamically or default to root
   },
   resolve: {
-    extensions: [".js", ".jsx"]
+    extensions: ['.js', '.jsx', '.ts', '.tsx'], // Support for JS, JSX, TS, and TSX
   },
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: ["babel-loader"]
+        test: /\.(js|jsx|ts|tsx)$/,
+        exclude: /node_modules\/(?!react-native)/, // Include react-native in the transpilation
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              '@babel/preset-react',
+              '@babel/preset-typescript',
+              '@babel/preset-env',
+            ],
+            plugins: [
+              '@babel/plugin-transform-runtime',
+              'react-native-web', // Handle react-native-web specific transformations
+            ],
+          },
+        },
       },
       {
-        test: /\.less$/,
-        use: [
-          { loader: "style-loader" },
-          { loader: "css-loader" },
-          { loader: "less-loader" }
-        ]
+        test: /\.(scss|css)$/, // Handle both SCSS and CSS
+        use: ['style-loader', 'css-loader', 'sass-loader'],
       },
       {
-        test: /\.scss$/,
+        test: /\.(eot|ttf|otf|woff2|woff|svg|gif|png|jpg)$/, // Handle fonts and images
         use: [
-          "style-loader", // creates style nodes from JS strings
-          "css-loader", // translates CSS into CommonJS
-          "sass-loader" // compiles Sass to CSS, using Node Sass by default
-        ]
-      },
-      {
-        test: /\.css$/,
-        use: [
-          { loader: "style-loader" },
-          { loader: "css-loader" },
-          { loader: "less-loader" }
-        ]
-      },
-      {
-        test: /\.xsvg$/,
-        use: [
-          {
-            loader: "thread-loader",
-            // loaders with equal options will share worker pools
-            options: {
-              // the number of spawned workers, defaults to (number of cpus - 1) or
-              // fallback to 1 when require('os').cpus() is undefined
-              workers: 2,
-              workerParallelJobs: 50,
-              workerNodeArgs: ['--max-old-space-size=1024'],
-              poolRespawn: false,
-              poolParallelJobs: 50,
-            }
-          },
-          {
-            loader: 'babel-loader',
-          },
-          {
-            loader: path.resolve('./loaders/xsvgLoader.js'),
-          },
-          {
-            loader: 'svgo-loader',
-            options: {
-              plugins: [
-                {
-                  removeAttrs: { attrs: '(xmlns.*|xml.*)' },
-                },
-                {
-                  inlineStyles: {
-                    onlyMatchedOnce: false,
-                    removeMatchedSelectors: true,
-                    useMqs: ['', 'screen'],
-                    usePseudos: ['']
-                  }
-                },
-                { removeViewBox: false },
-                { mergePaths: false }
-              ]
-            }
-          },
+          {loader: 'file-loader', options: {name: '[path][name].[hash].[ext]'}},
         ],
       },
-      {
-        test: /\.(eot|ttf|otf|woff2|woff|svg|gif|png|jpg)$/,
-        use: [{ loader: 'file-loader' }],
-      },
-    ]
+    ],
   },
   optimization: {
-    runtimeChunk: 'single',
-     minimizer: [
+    runtimeChunk: 'single', // Extract runtime code into a separate chunk
+    minimizer: [
       new TerserPlugin({
-        cache: true,
         parallel: true,
-        sourceMap: true, // Must be set to true if using source-maps in production
         terserOptions: {
           compress: {
-            drop_console: true,
+            drop_console: true, // Remove console logs for production
           },
-          // https://github.com/webpack-contrib/terser-webpack-plugin#terseroptions
         },
-        
-      })
+      }),
     ],
     splitChunks: {
-      chunks: "all"
-    }
+      chunks: 'all',
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name(module) {
+            const packageName = module.context.match(
+              /[\\/]node_modules[\\/](.*?)([\\/]|$)/,
+            )[1];
+            return `npm.${packageName.replace('@', '')}`;
+          },
+        },
+      },
+    },
   },
   plugins: [
     new webpack.DefinePlugin({
-      "process.env": {
-        NODE_ENV: JSON.stringify("production"),
-        BASE_URL: JSON.stringify(""),
-      }
+      'process.env': {
+        NODE_ENV: JSON.stringify('production'),
+        BASE_URL: JSON.stringify(process.env.BASE_URL || ''),
+      },
     }),
-
-    new webpack.optimize.OccurrenceOrderPlugin(),
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, 'public', 'index.html'),
+      inject: 'body',
+      tenantToken: process.env.tenantToken || '',
+    }),
     new WebpackGoogleCloudStoragePlugin({
       directory: path.resolve(__dirname, 'public/build'),
       include: [/.*\.js/],
       storageOptions: {
         projectId: process.env.projectId,
-        // credentials: require(process.env.GOOGLE_APPLICATION_CREDENTIALS),
       },
       uploadOptions: {
         bucketName: process.env.bucketName,
         destinationNameFn: file =>
-           path.join('flightcrsui/assets/js', file.name)
-        ,
-        metadataFn: file => ({
-          cacheControl: 'public, max-age=31536000',
-        }),
+          path.join('flightcrsui/assets/js', file.name),
+        metadataFn: file => ({cacheControl: 'public, max-age=31536000'}),
         gzip: true,
         makePublic: true,
         resumable: true,
         concurrency: 5,
       },
     }),
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, "public", "index.html"),
-      inject: "body",
-      tenantToken: process.env.tenantToken || '',
-    })
-  ]
+  ],
 };

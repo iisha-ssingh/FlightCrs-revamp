@@ -13,7 +13,7 @@ app.use('/admin/flightcrs/flightaggregation/*', (req, res) => {
   console.log(req.originalUrl, tempUrl, url);
   let r = null;
   if (req.method === 'POST') {
-    r = request.post({ uri: url, json: req.body });
+    r = request.post({uri: url, json: req.body});
   } else {
     r = request(url);
   }
@@ -23,6 +23,6 @@ app.use('/admin/flightcrs/flightaggregation/*', (req, res) => {
 // app.use('/admin/gordon', express.static(DIST_DIR));
 app.get('*', (req, res) => res.sendFile(HTML_FILE));
 
-app.listen((PORT), () => {
+app.listen(PORT, () => {
   console.log(`Running on port ${PORT}`);
 });

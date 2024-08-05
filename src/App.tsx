@@ -101,15 +101,19 @@
 import React from 'react';
 import {SearchPage} from './pages/search/main';
 import {LogLevel, setLogLevel} from './layers/loggingService.ts';
+import {Provider} from 'react-redux';
+
+import {store} from './store';
 
 // TODO: some global alert and error screen | something like root HOC
 const App: React.FC = () => {
   setLogLevel(LogLevel.LOG);
+
   return (
-    <div>
+    <Provider store={store}>
       {/*<CreateFlightBookings />*/}
       <SearchPage />
-    </div>
+    </Provider>
   );
 };
 
