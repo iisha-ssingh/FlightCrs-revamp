@@ -7,44 +7,41 @@ const HOST = process.env.HOST || "0.0.0.0";
 const PORT = process.env.PORT || "3000";
 
 module.exports = {
-  mode: 'development',  // Set mode to development
+  mode: "development", // Set mode to development
   entry: ["/src/index.tsx"],
-  devtool: 'eval-source-map', 
+  devtool: "eval-source-map",
   output: {
     path: path.resolve(__dirname, "public/build"),
-    filename: "[name].[contenthash].js",  // Use contenthash for better caching
-    publicPath: "/"
+    filename: "[name].[contenthash].js", // Use contenthash for better caching
+    publicPath: "/",
   },
   resolve: {
+    alias: {
+      "react-native$": "react-native-web",
+    },
     extensions: [".js", ".jsx", ".ts", ".tsx"],
   },
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: 'babel-loader',
-            options: {
-            presets: ['@babel/preset-react'] // Use the react preset
-            }
+        test: /\.(js|jsx|ts|tsx)$/,
+        exclude: /node_modules\/(?!react-native)/, // Include react-native in the transpilation
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: [
+              "@babel/preset-react",
+              "@babel/preset-typescript",
+              "@babel/preset-env",
+            ],
+            plugins: [
+              "@babel/plugin-transform-runtime",
+              "react-native-web", // Add this to handle react-native-web specific transformations
+            ],
           },
-        ],
+        },
       },
-      {
-        test: /\.(ts|tsx)$/,
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: 'babel-loader',
-            options: {
-              presets: ['@babel/preset-react', '@babel/preset-typescript'] // Use the react and typescript presets
-            }
-          },
-        ],
-      },
-    ]
+    ],
   },
   optimization: {
     minimize: false,
@@ -55,30 +52,30 @@ module.exports = {
       cacheGroups: {
         vendor: {
           test: /[\\/]node_modules[\\/]/,
-          name(module:any) {
+          name(module: any) {
             const packageName = module.context.match(
               /[\\/]node_modules[\\/](.*?)([\\/]|$)/
             )[1];
             return `npm.${packageName.replace("@", "")}`;
-          }
-        }
-      }
-    }
+          },
+        },
+      },
+    },
   },
 
   devServer: {
-    static: './public',
+    static: "./public",
     historyApiFallback: true,
     port: PORT,
     host: HOST,
-    allowedHosts: ['flightcrs.fabhotels.com'],
+    allowedHosts: ["flightcrs.fabhotels.com"],
     proxy: [
-          {
-            context: ["/admin/flightcrs/flightaggregation/**"],
-            target: "https://uat.fabmailers.in/",
-            secure: false,
-            changeOrigin: true
-          },
+      {
+        context: ["/admin/flightcrs/flightaggregation/**"],
+        target: "https://uat.fabmailers.in/",
+        secure: false,
+        changeOrigin: true,
+      },
     ],
   },
 
@@ -88,7 +85,8 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.join(__dirname, "public", "index.html"),
       inject: "body",
-      tenantToken: process.env.tenantToken || '0ec8cb68-7e6d-4aa1-b21e-634a49824e63',
+      tenantToken:
+        process.env.tenantToken || "0ec8cb68-7e6d-4aa1-b21e-634a49824e63",
     }),
     // new ESLintPlugin({  // Add ESLint plugin for real-time linting
     //   extensions: ['js', 'jsx'],
@@ -98,5 +96,5 @@ module.exports = {
     //   'process.env.NODE_ENV': JSON.stringify('development'),
     //   'process.env.DEBUG': JSON.stringify(process.env.DEBUG || 'false'),
     // }),
-  ]
+  ],
 };
