@@ -11,14 +11,14 @@ import {
   PASSENGER_DETAILS,
   PAYMENT_DETAILS,
   PRICE_BREAKUP,
-  INITIAL_PREFETCH
+  INITIAL_PREFETCH,
 } from '../constants/formState';
 import {
   corporateDetailsFormatter,
   tripDetailsFormatter,
   bookingDetailsFormatter,
   flightDetailsFormatter,
-  populatePrefetch
+  populatePrefetch,
 } from '../utils/apiDataFormatter';
 import {
   FormState,
@@ -38,12 +38,11 @@ import {
 import { isEmpty } from '../../../utils/common';
 import { strings } from '../../../utils/strings';
 
-
 const initialState: FormView = {
   screenLoading: false,
   screenError: false,
-  apiError : false,
-  apiMessage : '',
+  apiError: false,
+  apiMessage: '',
   prefetch: {
     ...INITIAL_PREFETCH,
   },
@@ -55,9 +54,9 @@ const initialState: FormView = {
   subtripDetails: [],
   cityAutosuggestList: [],
   corporateUsersList: [],
-  corporateUserError : '',
-  downloadDocument : {},
-  downloadVoucher : {},
+  corporateUserError: '',
+  downloadDocument: {},
+  downloadVoucher: {},
   journeyType: JSON.parse(JSON.stringify({ ...JOURNEY_TYPE })),
   corporateDetails: JSON.parse(JSON.stringify({ ...CORPORATE_DETAILS })),
   tripDetails: JSON.parse(JSON.stringify({ ...TRIP_MAPPING })),
@@ -67,7 +66,7 @@ const initialState: FormView = {
   baggageDetails: JSON.parse(JSON.stringify({ ...BAGGAGE_DETAILS })),
   guestDetails: JSON.parse(JSON.stringify({ ...PASSENGER_DETAILS })),
   paymentMode: JSON.parse(JSON.stringify({ ...PAYMENT_DETAILS })),
-  priceBreakup: JSON.parse(JSON.stringify({ ...PRICE_BREAKUP }))
+  priceBreakup: JSON.parse(JSON.stringify({ ...PRICE_BREAKUP })),
 };
 
 const flightForm = createSlice({
@@ -78,7 +77,9 @@ const flightForm = createSlice({
     updateFormState: (state, action: PayloadAction<FormState>) => {
       const { component, field, value } = action.payload;
       if (component in state && typeof state[component] === 'object') {
-        const formState = (state[component] as Record<string, unknown>)[field] as { value: object };
+        const formState = (state[component] as Record<string, unknown>)[
+          field
+        ] as { value: object };
         formState.value = value;
       }
     },
@@ -94,84 +95,94 @@ const flightForm = createSlice({
       state.prefetch = { ...INITIAL_PREFETCH };
     },
 
-
     //Convenience fee
     getConvenienceFee: (state) => {
-      state.convenienceFee = {}
+      state.convenienceFee = {};
     },
     convenienceFeeSuccess: (state, action: PayloadAction<object>) => {
       state.convenienceFee = { ...action.payload };
     },
     convenienceFeeError: (state, action: PayloadAction<string>) => {
-      state.convenienceFee = {}
+      state.convenienceFee = {};
     },
 
     //Company name
     getCompanyName: (state) => {
-      state.companyName = []
+      state.companyName = [];
     },
     companyNameSuccess: (state, action: PayloadAction<Company[]>) => {
       state.companyName = [...action.payload];
     },
     companyNameError: (state, action: PayloadAction<string>) => {
-      state.convenienceFee = {}
+      state.convenienceFee = {};
       state.corporateDetails.companyName = {
         ...state.corporateDetails.companyName,
         value: '',
         isError: true,
-        errorMessage: action.payload
-      }
+        errorMessage: action.payload,
+      };
     },
 
     //Custom config
     getCustomConfig: (state) => {
-      state.customConfig = {}
+      state.customConfig = {};
     },
-    customConfigSuccess: (state, action: PayloadAction<CustomConfig | object>) => {
+    customConfigSuccess: (
+      state,
+      action: PayloadAction<CustomConfig | object>,
+    ) => {
       state.customConfig = { ...action.payload };
     },
     customConfigError: (state, action: PayloadAction<string>) => {
-      state.customConfig = {}
+      state.customConfig = {};
     },
 
     //Manager List
     getManagerList: (state) => {
-      state.managerList = []
+      state.managerList = [];
     },
     managerListSuccess: (state, action: PayloadAction<User[] | []>) => {
       state.managerList = [...action.payload];
     },
     managerListError: (state, action: PayloadAction<string>) => {
-      state.managerList = []
+      state.managerList = [];
     },
 
     //GstIn
     getGstIn: (state) => {
-      state.gstInList = []
+      state.gstInList = [];
     },
     gstInSuccess: (state, action: PayloadAction<GstinList[] | []>) => {
       state.gstInList = [...action.payload];
     },
     gstInError: (state, action: PayloadAction<string>) => {
-      state.gstInList = []
+      state.gstInList = [];
     },
 
     //Subtrip details
     getSubtripDetails: (state) => {
-      state.subtripDetails = []
+      state.subtripDetails = [];
     },
     subtripSuccess: (state, action: PayloadAction<Array<object> | null>) => {
-      state.subtripDetails = [...(Array.isArray(action.payload) ? action.payload : [])];
+      state.subtripDetails = [
+        ...(Array.isArray(action.payload) ? action.payload : []),
+      ];
     },
     subtripError: (state, action: PayloadAction<string>) => {
-      state.subtripDetails = []
+      state.subtripDetails = [];
     },
 
     //City autosuggest
-    getCityAutosuggest: (state, action: PayloadAction<CityAutoSuggestPayload | object>) => {
-      state.cityAutosuggestList = []
+    getCityAutosuggest: (
+      state,
+      action: PayloadAction<CityAutoSuggestPayload | object>,
+    ) => {
+      state.cityAutosuggestList = [];
     },
-    cityAutosuggestSuccess: (state, action: PayloadAction<CitySuggestionResponse | {}>) => {
+    cityAutosuggestSuccess: (
+      state,
+      action: PayloadAction<CitySuggestionResponse | {}>,
+    ) => {
       if ('suggestions' in action.payload) {
         state.cityAutosuggestList = [...action.payload.suggestions];
       } else {
@@ -179,68 +190,82 @@ const flightForm = createSlice({
       }
     },
     cityAutosuggestError: (state, action: PayloadAction<string>) => {
-      state.cityAutosuggestList = []
+      state.cityAutosuggestList = [];
     },
 
-     //City autosuggest
-     getCorporateUsers: (state, action: PayloadAction<CorporateUserAutosuggest | object>) => {
-      state.corporateUsersList = []
+    //City autosuggest
+    getCorporateUsers: (
+      state,
+      action: PayloadAction<CorporateUserAutosuggest | object>,
+    ) => {
+      state.corporateUsersList = [];
     },
-    corporateUsersSuccess: (state, action: PayloadAction<CorporateUser[] | []>) => {
-      state.corporateUsersList = [...action.payload]
-      state.corporateUserError = isEmpty(action?.payload) ? strings.NO_USER_FOUND : ''
+    corporateUsersSuccess: (
+      state,
+      action: PayloadAction<CorporateUser[] | []>,
+    ) => {
+      state.corporateUsersList = [...action.payload];
+      state.corporateUserError = isEmpty(action?.payload)
+        ? strings.NO_USER_FOUND
+        : '';
     },
     corporateUsersError: (state, action: PayloadAction<string>) => {
       state.corporateUsersList = [];
-      state.corporateUserError = action.payload
+      state.corporateUserError = action.payload;
     },
 
     //Download document
-    downloadDocumentAction : (state, action: PayloadAction<DownloadDocumentRequest>) => {
-      state.downloadDocument = {}
+    downloadDocumentAction: (
+      state,
+      action: PayloadAction<DownloadDocumentRequest>,
+    ) => {
+      state.downloadDocument = {};
     },
-    downloadDocumentSuccess: (state, action: PayloadAction<GenericResponse>) => {
+    downloadDocumentSuccess: (
+      state,
+      action: PayloadAction<GenericResponse>,
+    ) => {
       state.downloadDocument = {
         message: action.payload.message ?? strings.SOMETHING_WENT_WRONG,
-        data: action.payload.data ?? ''
-      }
+        data: action.payload.data ?? '',
+      };
     },
-    downloadDocumentError : (state, action: PayloadAction<string>) => {
+    downloadDocumentError: (state, action: PayloadAction<string>) => {
       state.downloadDocument = {
-       message: action?.payload ?? strings.SOMETHING_WENT_WRONG,
-       data: ''
-      }
+        message: action?.payload ?? strings.SOMETHING_WENT_WRONG,
+        data: '',
+      };
     },
 
     //Download document
-    downloadVoucherAction : (state) => {
-      state.downloadVoucher = {}
+    downloadVoucherAction: (state) => {
+      state.downloadVoucher = {};
     },
     downloadVoucherSuccess: (state, action: PayloadAction<GenericResponse>) => {
       state.downloadVoucher = {
         message: action.payload.message ?? strings.SOMETHING_WENT_WRONG,
-        data: action.payload.data ?? ''
-      }
+        data: action.payload.data ?? '',
+      };
     },
-    downloadVoucherError : (state, action: PayloadAction<string>) => {
+    downloadVoucherError: (state, action: PayloadAction<string>) => {
       state.downloadVoucher = {
-       message: action?.payload ?? strings.SOMETHING_WENT_WRONG,
-       data: ''
-      }
+        message: action?.payload ?? strings.SOMETHING_WENT_WRONG,
+        data: '',
+      };
     },
 
-    editGstAction : (state) =>{
-        state.apiError = false
-        state.apiMessage = ''
+    editGstAction: (state) => {
+      state.apiError = false;
+      state.apiMessage = '';
     },
-    editGstAuthorisationAction : (state) =>{
-        state.apiError = false
-        state.apiMessage = ''
+    editGstAuthorisationAction: (state) => {
+      state.apiError = false;
+      state.apiMessage = '';
     },
 
-    cancelModificationRequestAction : (state) =>{
-        state.apiError = false
-        state.apiMessage = ''
+    cancelModificationRequestAction: (state) => {
+      state.apiError = false;
+      state.apiMessage = '';
     },
 
     // View Details
@@ -254,22 +279,26 @@ const flightForm = createSlice({
         corporateDetails = {},
         relationshipManager = {},
         flightDetails = {},
-        bookingDetails = {}
+        bookingDetails = {},
       } = viewData;
 
       state.screenLoading = false;
       state.screenError = false;
       state.corporateDetails = {
         ...state.corporateDetails,
-        ...corporateDetailsFormatter(state, corporateDetails, relationshipManager)
+        ...corporateDetailsFormatter(
+          state,
+          corporateDetails,
+          relationshipManager,
+        ),
       };
       state.tripDetails = {
         ...state.tripDetails,
-        ...tripDetailsFormatter(state, flightDetails)
+        ...tripDetailsFormatter(state, flightDetails),
       };
       state.bookingDetails = {
         ...state.bookingDetails,
-        ...bookingDetailsFormatter(state, bookingDetails)
+        ...bookingDetailsFormatter(state, bookingDetails),
       };
       state.flightDetails = {
         ...state.flightDetails,
@@ -280,15 +309,15 @@ const flightForm = createSlice({
       state.screenLoading = false;
       state.screenError = true;
     },
-    postSuccess : (state,action : PayloadAction<GenericResponse>) => {
-      state.apiError = false
-      state.apiMessage = action?.payload?.message
+    postSuccess: (state, action: PayloadAction<GenericResponse>) => {
+      state.apiError = false;
+      state.apiMessage = action?.payload?.message;
     },
-    postError : (state,action : PayloadAction<string>) => {
-      state.apiError = false
-      state.apiMessage = action.payload
-    }
-  }
+    postError: (state, action: PayloadAction<string>) => {
+      state.apiError = false;
+      state.apiMessage = action.payload;
+    },
+  },
 });
 
 export const {
@@ -330,7 +359,7 @@ export const {
   editGstAuthorisationAction,
   cancelModificationRequestAction,
   postSuccess,
-  postError
+  postError,
 } = flightForm.actions;
 
 export default flightForm.reducer;

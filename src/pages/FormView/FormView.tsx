@@ -36,7 +36,9 @@ const CreateFlightBookings: React.FC = () => {
       <div key={key}>{key} : {details[key]?.value}</div>
     ));
   };
-
+useEffect(() => {
+    throw new Error("Sentry Test Error");
+},[])
   return (
     <div>
 

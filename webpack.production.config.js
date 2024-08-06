@@ -100,7 +100,7 @@ module.exports = {
   },
   optimization: {
     runtimeChunk: 'single',
-     minimizer: [
+    minimizer: [
       new TerserPlugin({
         cache: true,
         parallel: true,
@@ -111,7 +111,7 @@ module.exports = {
           },
           // https://github.com/webpack-contrib/terser-webpack-plugin#terseroptions
         },
-        
+
       })
     ],
     splitChunks: {
@@ -137,7 +137,7 @@ module.exports = {
       uploadOptions: {
         bucketName: process.env.bucketName,
         destinationNameFn: file =>
-           path.join('flightcrsui/assets/js', file.name)
+          path.join('flightcrsui/assets/js', file.name)
         ,
         metadataFn: file => ({
           cacheControl: 'public, max-age=31536000',
