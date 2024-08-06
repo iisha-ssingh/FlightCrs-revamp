@@ -7,6 +7,7 @@ import ForbiddenError from './errors/ForbiddenError';
 import Constants from './utils/StringLiterals';
 import type { JsonObjectType } from './utils';
 import { isEmpty } from '../utils/common';
+import NoInternetError from './errors/NoInternetError.ts';
 // import {ApiResponse} from "../pages/FormView/utils/props.ts";
 
 const STRINGS = Constants.NETWORK_LAYER;
@@ -84,7 +85,7 @@ const NetworkLayer = (() => {
   (() => {
     const updateNetworkStatus = () => {
       isNetworkConnected = navigator.onLine;
-      console.log(`Network is ${isNetworkConnected ? 'online' : 'offline'}`);
+      //   console.log(`Network is ${isNetworkConnected ? 'online' : 'offline'}`);
     };
     window.addEventListener('online', updateNetworkStatus);
     window.addEventListener('offline', updateNetworkStatus);
@@ -195,10 +196,6 @@ const NetworkLayer = (() => {
 
   console.info('Network layer initialized');
   return {
-    // isNetworkConnected: () => isNetworkConnected,
-    // init: () => {
-    //   console.info('Network layer initialized');
-    // },
     isNetworkConnected: () => isNetworkConnected,
     get: async ({ service, data, options, prefixHost }: ApiParamsWithData) => {
       return await fetchData({

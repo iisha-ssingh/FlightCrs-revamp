@@ -99,12 +99,16 @@
 // export default App;
 
 import React from 'react';
-import CreateFlightBookings from './pages/FormView';
+import {SearchPage} from "./pages/search/main";
+import {LogLevel, setLogLevel, log} from "./layers/loggingService.ts";
 
+// TODO: some global alert and error screen | something like root HOC
 const App: React.FC = () => {
+    setLogLevel(LogLevel.LOG);
   return (
     <div>
-      <CreateFlightBookings />
+      {/*<CreateFlightBookings />*/}
+        <SearchPage/>
     </div>
   );
 }
