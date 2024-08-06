@@ -20,3 +20,20 @@ export const httpStatusCodes = {
   
     return isEmptyValue;
 }
+
+export const pathOr = <T>(initial: T, str: string, obj: Record<string, any>): T => {
+  const arr = str.split('.');
+  let retVal: any = initial;
+  try {
+    for (const key of arr) {
+      retVal = obj[key];
+      if (retVal === undefined || retVal === null) {
+        return initial;
+      }
+      obj = retVal;
+    }
+  } catch (e) {
+    retVal = initial;
+  }
+  return retVal as T;
+};

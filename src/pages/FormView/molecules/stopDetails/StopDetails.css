@@ -1,0 +1,64 @@
+.stop-details {
+    max-width: 400px;  /* Adjust this value to change the overall width */
+    padding: 20px;
+  }
+  
+  .stop-section {
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .stop-section h4 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 15px;
+  }
+  
+  .stop-section-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .stop-section-grid > div {
+    width: 100%;
+  }
+  
+  .stop-section input,
+  .stop-section .MuiInputBase-root,
+  .stop-section .react-datepicker-wrapper {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+  }
+  
+  .stop-section .MuiInputBase-root {
+    background-color: #fff;
+  }
+  
+  .stop-section .MuiSelect-select {
+    padding-right: 32px;
+  }
+  
+  .stop-section .MuiSvgIcon-root {
+    right: 7px;
+    position: absolute;
+    pointer-events: none;
+  }
+  
+  /* Styles for required fields */
+  .stop-section label::after {
+    content: ' *';
+    color: #ff0000;
+  }
+  
+  /* Ensure the datepicker input takes full width */
+  .stop-section .react-datepicker-wrapper,
+  .stop-section .react-datepicker__input-container,
+  .stop-section .react-datepicker__input-container input {
+    width: 100%;
+  }

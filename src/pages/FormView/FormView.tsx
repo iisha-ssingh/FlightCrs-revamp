@@ -14,6 +14,8 @@ import { isEmpty } from "../../utils/common";
 import { RootState } from "../../redux/store"; // Adjust this import path as needed
 import { Details, ComponentProps } from "./utils/props";
 import { Pressable, Text } from "react-native";
+import BookingDetails from "./molecules/bookingDetails";
+
 
 const CreateFlightBookings: React.FC = () => {
   const dispatch = useDispatch();
@@ -34,7 +36,7 @@ const CreateFlightBookings: React.FC = () => {
     tripDetails = {},
     bookingDetails = {},
   } = useSelector((state: RootState) => state.formView as ComponentProps);
-
+  
   const renderDetails = (details: Details) => {
     return (
       !isEmpty(details) &&

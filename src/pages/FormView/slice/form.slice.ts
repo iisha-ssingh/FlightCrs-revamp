@@ -11,7 +11,8 @@ import {
   PASSENGER_DETAILS,
   PAYMENT_DETAILS,
   PRICE_BREAKUP,
-  INITIAL_PREFETCH
+  INITIAL_PREFETCH,
+  STOP_INFO_OBJECT,
 } from '../constants/formState';
 import { 
   corporateDetailsFormatter, 
@@ -62,7 +63,6 @@ const flightForm = createSlice({
   name: FLIGHT_FORM,
   initialState,
   reducers: {
-    // Form State update
     updateFormState: (state, action: PayloadAction<FormState>) => {
       const { component, field, value } = action.payload;
       if (component in state && typeof state[component] === 'object') {
@@ -70,7 +70,22 @@ const flightForm = createSlice({
         formState.value = value;
       }
     },
-
+    updateStopDetails: (state, action: PayloadAction<FormState>) => {
+      const { field, value } = action.payload;
+      if (field === 'stopInfo') {
+        state.stopDetails.stopInfo = value;
+      } else if (field === 'stop') {
+        state.stopDetails.stop.value = value.value;
+        const numStops = parseInt(value.value, 10);
+        state.stopDetails.stopInfo = Array(numStops).fill(null).map((_, index) => 
+          index < state.stopDetails.stopInfo.length 
+            ? state.stopDetails.stopInfo[index] 
+            : JSON.parse(JSON.stringify(STOP_INFO_OBJECT))
+        );
+      } else {
+        state.stopDetails[field].value = value;
+      }
+    },
     // Prefetch
     prefetchInit : (state) => {
       state.prefetch  = { ...INITIAL_PREFETCH };
@@ -215,6 +230,7 @@ export const {
   prefetchInit,
   prefetchSuccess,
   prefetchError,
+  updateStopDetails,
   getViewDetails,
   viewDetailsSuccess,
   viewDetailsFailure,

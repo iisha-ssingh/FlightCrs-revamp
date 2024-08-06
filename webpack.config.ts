@@ -41,7 +41,24 @@ module.exports = {
           },
         },
       },
-    ],
+      {
+        test: /\.(ts|tsx)$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-react', '@babel/preset-typescript'] // Use the react and typescript presets
+            }
+          },
+        ],
+      },
+
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader']
+      }
+    ]
   },
   optimization: {
     minimize: false,

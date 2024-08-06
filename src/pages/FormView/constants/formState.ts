@@ -147,65 +147,46 @@ export const TRIP_MAPPING_INTL= {
     },
   }
 
-export const BOOKING_DETAILS = {
-  origin: {
-    componentType: 'autoSuggest-citySearch',
-    inputProps: {
-      placeholder: "Departure city or airport",
-      dynamicPlaceholder: true,
+  export const BOOKING_DETAILS = {
+    origin: {
+      value: null,
+      label: "Departure city or airport",
+      placeholder: "Enter departure city or airport",
+      isSearchable: true,
       required: true,
-      errorMessage: 'Please enter departure city or airport',
-      id: "origin",
-      requiredText: '*',
-      isError: false,
     },
-    selectedItem: {},
-    options: [],
-    itemTextKey: "text",
-    itemValueKey: "value",
-    key: "origin"
-  },
-  destination: {
-    componentType: 'autoSuggest-citySearch',
-    inputProps: {
-      placeholder: "Arrival city or airport",
-      dynamicPlaceholder: true,
+    destination: {
+      value: null,
+      label: "Arrival city or airport",
+      placeholder: "Enter arrival city or airport",
+      isSearchable: true,
       required: true,
-      errorMessage: 'Please enter arrival city or airport',
-      id: "destination",
-      requiredText: '*',
-      isError: false,
     },
-    selectedItem: {},
-    options: [],
-    itemTextKey: "text",
-    itemValueKey: "value",
-    key: "destination"
-  },
-  depDate: {
-    componentType: "dateSelection",
-    id: "depDate",
-    name: "depDate",
-    value: "",
-    isError: false,
-    requiredText: '*',
-    required: true,
-    errorMessage: "Please select departure Date",
-    dynamicPlaceholder: true,
-    placeholder: "Departure Date",
-  },
-
-  noOfTravellers: {
-    componentType: 'numberInput',
-    value: 1,
-    placeholder: 'Guest count ',
-    required: true,
-    dynamicPlaceholder: true,
-    requiredText: '*',
-    errorMessage: "Please enter guest count",
-    isError: false,
-  },
-}
+    depDate: {
+      value: null,
+      label: "Departure date",
+      required: true,
+      options: {
+        dateFormat: "Y-m-d",
+        minDate: "today",
+      },
+    },
+    noOfTravellers: {
+      value: null,
+      label: "Guest count",
+      placeholder: "Select number of guests",
+      isSearchable: false,
+      required: true,
+      options: [
+        { label: "1 Guest", value: 1 },
+        { label: "2 Guests", value: 2 },
+        { label: "3 Guests", value: 3 },
+        { label: "4 Guests", value: 4 },
+        { label: "5 Guests", value: 5 },
+        { label: "6 Guests", value: 6 },
+      ],
+    },
+  };
 
 export const INTL_BOOKING_DETAILS = {
   pnr: {
@@ -531,22 +512,63 @@ arrTerminal: {
 
 export const STOP_DETAILS = {
   stop: {
-    componentType: 'dropdown',
-    options: [],
-    selectedItem: {},
-    hideValue: true,
-    dynamicPlaceholder: true,
-    required: true,
-    requiredText: '*',
-    placeholderText: "Stop",
+    value: '',
+    placeholderText: "Select number of stops",
+  },
+  stopInfo: [   
+  ] ,
+}
+export const STOP_INFO_OBJECT = {
+  city: {
+    value: '',
+    placeholderText: "City or airport",
     isError: false,
-    errorMessage: "Please select Stop",
-},
-  stopInfo: [] ,
+    errorMessage: '',
+  },
+  airline: {
+    value: '',
+    placeholderText: "Airline",
+    options: [], 
+    isError: false,
+    errorMessage: '',
+  },
+  flightNumber: {
+    value: '',
+    label: "Flight number",
+    isError: false,
+    errorMessage: '',
+  },
+  arrivalTime: {
+    value: null,
+    label: "Arrival time",
+    isError: false,
+    errorMessage: '',
+  },
+  departureTime: {
+    value: null,
+    label: "Departure time",
+    isError: false,
+    errorMessage: '',
+  },
+  arrivalTerminal: {
+    value: '',
+    placeholderText: "Arrival terminal",
+    options: [], 
+    isError: false,
+    errorMessage: '',
+  },
+  departureTerminal: {
+    value: '',
+    placeholderText: "Departure terminal",
+    options: [],
+    isError: false,
+    errorMessage: '',
+  },
 }
 
 export const BAGGAGE_DETAILS = {
   cabin: {
+    id: 'cabin',
     componentType: 'input',
     value: "",
     type:"number",
@@ -559,6 +581,7 @@ export const BAGGAGE_DETAILS = {
     maxLength:3,
 },
 checkIn: {
+    id: 'checkIn',
     componentType: 'input',
     value: "",
     type:"number",
@@ -727,28 +750,22 @@ export const PASSENGER_DETAILS = {
 
 export const PAYMENT_DETAILS = {
   paymentMode: {
-    componentType: 'dropdown',
     options: [],
-    selectedItem: {},
-    hideValue: true,
-    dynamicPlaceholder: true,
-    required: true,
-    requiredText: '*',
-    placeholderText: "Payment mode",
+    value: '',
     isError: false,
-    errorMessage: "Please enter payment mode",
+    placeholderText: "Payment mode",
+    required: true,
+    selectKey: "label",
+    textKey: "value"
 },
 paymentOption: {
-    componentType: 'dropdown',
-    options: [],
-    selectedItem: {},
-    hideValue: true,
-    dynamicPlaceholder: true,
-    required: true,
-    requiredText: '*',
-    placeholderText: "Payment option",
-    isError: false,
-    errorMessage: "Please enter payment option",
+  options: [],
+  value: '',
+  isError: false,
+  placeholderText:"Payment option",
+  required: true,
+  selectKey:"label",
+  textKey:"value",
 },
 transactionId: {
     componentType: 'input',
